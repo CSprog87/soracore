@@ -1,0 +1,1113 @@
+<title>Sora Agents Platform</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: columna de lectura de 1120px bajo una banda de navegación fija; cada sección alterna prosa, tablas, gráficos y diagramas del expediente */
+:root{
+  --bg:#0A0D10; --s1:#10151A; --s2:#161C22; --line:#232C34;
+  --tx:#EEF2F4; --mu:#9BA7B0; --faint:#6B7984;
+  --accent:#4FE3C1; --accent-soft:rgba(79,227,193,.12); --accent-line:rgba(79,227,193,.35);
+  --warn:#F5B84B; --warn-soft:rgba(245,184,75,.13);
+  --risk:#F08A8A; --risk-soft:rgba(240,138,138,.13);
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500;
+  --track:#1B222A;
+  --f-display:'Space Grotesk','Inter',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F3F6F7; --s1:#FFFFFF; --s2:#E9EEF1; --line:#D3DBE0;
+    --tx:#0C1215; --mu:#4B5862; --faint:#7D8A94;
+    --accent:#0A7A66; --accent-soft:rgba(10,122,102,.09); --accent-line:rgba(10,122,102,.35);
+    --warn:#8F5B00; --warn-soft:rgba(237,161,0,.15);
+    --risk:#B42F2F; --risk-soft:rgba(227,73,72,.11);
+    --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100;
+    --track:#E4EAEE;
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F3F6F7; --s1:#FFFFFF; --s2:#E9EEF1; --line:#D3DBE0;
+  --tx:#0C1215; --mu:#4B5862; --faint:#7D8A94;
+  --accent:#0A7A66; --accent-soft:rgba(10,122,102,.09); --accent-line:rgba(10,122,102,.35);
+  --warn:#8F5B00; --warn-soft:rgba(237,161,0,.15);
+  --risk:#B42F2F; --risk-soft:rgba(227,73,72,.11);
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100;
+  --track:#E4EAEE;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0D10; --s1:#10151A; --s2:#161C22; --line:#232C34;
+  --tx:#EEF2F4; --mu:#9BA7B0; --faint:#6B7984;
+  --accent:#4FE3C1; --accent-soft:rgba(79,227,193,.12); --accent-line:rgba(79,227,193,.35);
+  --warn:#F5B84B; --warn-soft:rgba(245,184,75,.13);
+  --risk:#F08A8A; --risk-soft:rgba(240,138,138,.13);
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500;
+  --track:#1B222A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--tx);font-family:var(--f-body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+code{background:var(--s2);border:1px solid var(--line);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(24px,3.2vw,32px);line-height:1.15}
+h3{font-size:17px;line-height:1.3}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu)}
+.muted{color:var(--mu)}
+.prose{max-width:68ch;display:grid;gap:12px}
+
+/* Banda superior */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:600;white-space:nowrap}
+.brand-mark{width:22px;height:22px;border-radius:6px;background:var(--accent);display:grid;place-items:center}
+.brand-mark span{width:8px;height:8px;border-radius:50%;background:var(--bg)}
+.nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.nav::-webkit-scrollbar{display:none}
+.nav a{color:var(--mu);text-decoration:none;font-size:13.5px;padding:6px 10px;border-radius:6px;white-space:nowrap}
+.nav a:hover{color:var(--tx);background:var(--s2)}
+
+/* Portada */
+.hero{padding-block:56px 40px}
+.hero h1{font-size:clamp(38px,6vw,64px);line-height:1.02;letter-spacing:-.025em;margin-top:14px}
+.hero .lede{font-size:18px;color:var(--mu);max-width:62ch;margin-top:16px}
+.notice{margin-top:22px;display:flex;gap:10px;align-items:flex-start;background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);border-radius:10px;padding:12px 14px;max-width:78ch;font-size:14px}
+.notice b{color:var(--warn)}
+
+.pipeline{list-style:none;margin:32px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.step{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:12px;display:grid;gap:6px;align-content:start;min-width:0}
+.step .n{font-family:var(--f-mono);font-size:11px;color:var(--faint)}
+.step .t{font-weight:600;font-size:14px;line-height:1.3}
+.step .d{font-size:12.5px;color:var(--mu);line-height:1.4}
+.step.done{border-color:var(--accent-line)}
+.step.run{border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;width:max-content;max-width:100%}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.ok{color:var(--accent);background:var(--accent-soft)}
+.chip.run{color:var(--warn);background:var(--warn-soft)}
+.chip.todo{color:var(--mu);background:var(--s2)}
+.chip.risk{color:var(--risk);background:var(--risk-soft)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:28px}
+.tile{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:6px;align-content:start}
+.tile .v{font-family:var(--f-display);font-size:30px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile .v small{font-size:15px;color:var(--mu);font-weight:500}
+.tile .l{font-size:13.5px;color:var(--mu);line-height:1.45}
+
+/* Secciones */
+section.sec{padding-block:56px;border-top:1px solid var(--line)}
+.sec-head{display:grid;gap:10px;margin-bottom:28px}
+.sec-head .src{font-size:13px;color:var(--faint)}
+.grid2{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:860px){.grid2{grid-template-columns:1fr 1fr}}
+.grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:10px;align-content:start;min-width:0}
+.card p,.card li{font-size:14.5px}
+.card .id{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.quote{font-family:var(--f-display);font-size:clamp(20px,2.6vw,26px);line-height:1.3;font-weight:500;max-width:40ch;border-left:2px solid var(--accent);padding-left:18px}
+ul.list{margin:0;padding-left:18px;display:grid;gap:8px}
+ul.list li::marker{color:var(--faint)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.kv dt{color:var(--mu)}
+.kv dd{margin:0;font-variant-numeric:tabular-nums}
+.callout{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:6px;background:var(--s1)}
+.callout.warn{border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:var(--warn-soft)}
+.callout.risk{border-color:color-mix(in srgb,var(--risk) 40%,transparent);background:var(--risk-soft)}
+.callout h3{font-size:15.5px}
+.stack{display:grid;gap:16px}
+.mt{margin-top:24px}
+
+/* Tablas */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--s1)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:500;text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+tr.base td{background:var(--accent-soft)}
+td .sub{display:block;font-size:12.5px;color:var(--mu)}
+
+/* Gráficos */
+.chart{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:14px;min-width:0}
+.chart-title{display:grid;gap:4px}
+.chart-title h3{font-size:15.5px}
+.chart-title p{font-size:13px;color:var(--mu)}
+.hbar{display:grid;gap:12px}
+.hrow{display:grid;grid-template-columns:minmax(110px,150px) 1fr minmax(92px,auto);gap:12px;align-items:center}
+.hlab{font-size:13.5px}
+.htrack{position:relative;height:18px;background:var(--track);border-radius:4px}
+.hfill{position:absolute;inset:0 auto 0 0;background:var(--c1);border-radius:0 4px 4px 0;min-width:3px}
+.hceil{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--tx);opacity:.75;border-radius:1px}
+.hval{font-size:13px;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.hval span{color:var(--mu)}
+.axis{display:grid;grid-template-columns:minmax(110px,150px) 1fr minmax(92px,auto);gap:12px}
+.axis-scale{position:relative;height:16px;font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.axis-scale span{position:absolute;transform:translateX(-50%)}
+.axis-scale span:first-child{transform:none}
+.axis-scale span:last-child{transform:translateX(-100%)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--mu)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.sbar{display:flex;gap:2px;height:28px;border-radius:4px;overflow:hidden;background:var(--s1)}
+.sbar div{min-width:3px}
+.items{display:grid;gap:7px}
+.irow{display:grid;grid-template-columns:minmax(150px,230px) 1fr minmax(110px,auto);gap:12px;align-items:center;font-size:13.5px}
+.itrack{height:12px;position:relative}
+.ifill{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;min-width:3px}
+.ival{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ival span{color:var(--mu)}
+.k1{background:var(--c1)} .k2{background:var(--c2)} .k3{background:var(--c3)} .k4{background:var(--c4)}
+@media (max-width:560px){
+  .hrow,.axis{grid-template-columns:1fr auto}
+  .hrow .hlab{grid-column:1 / -1}
+  .axis > span:first-child{display:none}
+  .axis > span:last-child{display:none}
+  .irow{grid-template-columns:1fr auto}
+  .irow .itrack{grid-column:1 / -1;grid-row:2}
+}
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--s2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12.5px;max-width:260px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+
+/* Diagramas */
+figure.dg{margin:0;display:grid;gap:10px;min-width:0}
+figure.dg figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;align-items:baseline}
+figure.dg figcaption b{font-family:var(--f-display);font-weight:600;font-size:15.5px}
+figure.dg figcaption span{font-size:12.5px;color:var(--faint);font-family:var(--f-mono)}
+.dg-box{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto}
+.dg-box pre.mermaid{margin:0;background:transparent;font-size:12px;line-height:1.35;color:var(--mu);white-space:pre;min-width:max-content}
+.dg-box pre.mermaid svg{max-width:none;height:auto}
+.dg-note{font-size:13.5px;color:var(--mu);max-width:80ch}
+
+/* Pie */
+footer{border-top:1px solid var(--line);padding-block:32px 48px;color:var(--mu);font-size:13px}
+footer .wrap{display:grid;gap:8px}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><div class="brand-mark" aria-hidden="true"><span></span></div>Sora Agents</div>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#estado">Estado</a>
+      <a href="#tesis">Tesis</a>
+      <a href="#producto">Producto</a>
+      <a href="#economia">Economía</a>
+      <a href="#arquitectura">Arquitectura</a>
+      <a href="#agentes">Agentes</a>
+      <a href="#canales">Canales</a>
+      <a href="#confianza">Confianza</a>
+      <a href="#calidad">Calidad</a>
+      <a href="#plan">Requisitos y plan</a>
+      <a href="#decisiones">Decisiones</a>
+      <a href="#riesgos">Riesgos</a>
+      <a href="#anexos">Anexos</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+<!-- PORTADA -->
+<section class="hero" id="estado">
+  <div class="eyebrow">Sora Valley · Diseño del MVP · Avance al 17 nov 2026</div>
+  <h1>Sora Agents Platform</h1>
+  <p class="lede">Agentes de IA como servicio para fintechs de crédito y BNPL en LatAm. Atienden clientes, gestionan cartera y cobranza y crean contenido para redes. Los modelos de riesgo de Sora Core deciden; los agentes conversan.</p>
+  <div class="notice"><b>Versión de avance.</b> <span>Ya están las oleadas 1 y 2 (10 entregables) y los gates 1 y 2. Están en curso los parches que pidió el Gate 2. Faltan el modelo comercial, el plan del MVP, el Gate 3 y el documento maestro. Las cifras son las canónicas del Gate 2, todavía sin confirmar por el liderazgo. Todo punto regulatorio está sujeto a validación legal.</span></div>
+
+  <ol class="pipeline" aria-label="Avance del expediente">
+    <li class="step done"><span class="n">1</span><span class="t">Contexto e instrucciones</span><span class="d">Negocio, visión, catálogo, supuestos, decisiones base</span><span class="chip ok">Hecho</span></li>
+    <li class="step done"><span class="n">2</span><span class="t">Oleada 1</span><span class="d">Benchmark, PRD, arquitectura, agentes, canales, seguridad</span><span class="chip ok">Hecho y parchado</span></li>
+    <li class="step done"><span class="n">3</span><span class="t">Gate 1</span><span class="d">Valores canónicos y 8 preguntas bloqueantes</span><span class="chip ok">Amarillo</span></li>
+    <li class="step done"><span class="n">4</span><span class="t">Oleada 2</span><span class="d">Observabilidad, costos, requisitos cliente e internos</span><span class="chip ok">Hecho</span></li>
+    <li class="step done"><span class="n">5</span><span class="t">Gate 2</span><span class="d">Fija precios verificados, margen y pisos de precio</span><span class="chip ok">Amarillo</span></li>
+    <li class="step run"><span class="n">6</span><span class="t">Oleada 3</span><span class="d">Modelo comercial y plan del MVP. Arranca cuando estén los parches de costos y onboarding</span><span class="chip run">Preparando</span></li>
+    <li class="step"><span class="n">7</span><span class="t">Gate 3</span><span class="d">Revisión de la oleada 3</span><span class="chip todo">Pendiente</span></li>
+    <li class="step"><span class="n">8</span><span class="t">Documento maestro</span><span class="d">Integración y reporte de consistencia</span><span class="chip todo">Pendiente</span></li>
+  </ol>
+
+  <div class="tiles">
+    <div class="tile"><div class="v">USD 0.062</div><div class="l">Costo de IA e infraestructura por conversación de atención, sin canal. Techo: 0.15.</div></div>
+    <div class="tile"><div class="v">USD 47.3 <small>mil/mes</small></div><div class="l">Nube y canales en lanzamiento (3 tenants, 96 mil conversaciones al mes), sin personas.</div></div>
+    <div class="tile"><div class="v">16 <small>semanas</small></div><div class="l">Desde el kickoff hasta el piloto en México. Con el reclutamiento previo, son 20 a 24 semanas en total.</div></div>
+    <div class="tile"><div class="v">12 <small>personas</small></div><div class="l">Equipo mínimo de construcción, unos USD 74 mil al mes con cargas.</div></div>
+  </div>
+</section>
+
+<!-- TESIS -->
+<section class="sec" id="tesis">
+  <div class="sec-head">
+    <div class="eyebrow">Por qué existe</div>
+    <h2>La tesis frente al mercado</h2>
+    <div class="src">Fuente: WP01 Benchmark de mercado</div>
+  </div>
+  <div class="grid2">
+    <div class="stack">
+      <p class="quote">Wonderful conversa. Sora conversa y decide con modelos de riesgo propios.</p>
+      <div class="prose">
+        <p>El espacio libre no es "un agente de cobranza por WhatsApp". Ese terreno ya lo ocupan especialistas latinoamericanos (Colektia, Kleva, Monest, Altur y otros) y plataformas horizontales como Wonderful.</p>
+        <p>Según lo verificado, nadie combina tres cosas: agentes de atención y cartera para <b>fintechs de crédito pequeñas y medianas</b>, gobernados por <b>decisiones de un modelo de riesgo propio</b> (siguiente mejor acción y motor de políticas por país), y con <b>medición de impacto contra un grupo de control</b>.</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="callout warn">
+        <h3>Wonderful ya está en la cancha</h3>
+        <p>Cerró su Serie C de USD 550 M el 2 sep 2026, a una valuación de USD 5 B. Para Banco Caja Social (Colombia) puso en producción un agente de voz de cobranza temprana en 19 días: 43,658 llamadas en 3 semanas, con 65% de promesas de pago frente a 45% del equipo humano (cifras del proveedor).</p>
+      </div>
+      <div class="card">
+        <h3>Posicionamiento recomendado</h3>
+        <ul class="list">
+          <li>Narrativa de plataforma vertical apoyada en Sora Core.</li>
+          <li>Entrada comercial con cobranza temprana más atención al cliente.</li>
+          <li>El contenido para redes entra como expansión, no como cuña.</li>
+          <li>Sin Sora Core y sin medir el impacto contra un grupo de control, un agente de cobranza es commodity.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTO -->
+<section class="sec" id="producto">
+  <div class="sec-head">
+    <div class="eyebrow">Qué se construye</div>
+    <h2>Cuatro agentes y un principio</h2>
+    <div class="src">Fuentes: WP02 PRD · WP04 Agentes y workflows · Catálogo de agentes del MVP</div>
+  </div>
+  <div class="grid3">
+    <div class="card"><span class="id">AG-RTR</span><h3>Router</h3><p>Clasifica cada mensaje con reglas y Claude Haiku 5.5 y se lo entrega a un especialista o a un workflow. Cada conversación tiene un solo agente responsable, con un máximo de 2 traspasos entre agentes.</p></div>
+    <div class="card"><span class="id">AG-ATC</span><h3>Atención 24/7</h3><p>31 intents: saldo y pagos, razones de rechazo, cargos no reconocidos, quejas formales con la ruta regulatoria de cada país.</p></div>
+    <div class="card"><span class="id">AG-COB</span><h3>Cartera y cobranza</h3><p>24 intents: link de pago, promesa, plan de pagos con segundo factor, "ya pagué", "no soy esa persona" y protocolo para clientes vulnerables.</p></div>
+    <div class="card"><span class="id">AG-CON</span><h3>Contenido para redes</h3><p>16 intents: del brief a la pieza, aprobación humana obligatoria, publicación y reporte de desempeño.</p></div>
+  </div>
+  <div class="grid2 mt">
+    <div class="callout">
+      <h3>El LLM conversa, el sistema decide</h3>
+      <p class="muted">Ningún monto, plan, descuento o bloqueo sale del modelo. Los calcula el motor de políticas y ofertas y los firma con un <code>policy_decision_id</code>. Las confirmaciones solo valen si el usuario pulsa un botón; el LLM no puede fabricarlas. El modelo nunca ve el identificador real del cliente.</p>
+    </div>
+    <div class="card">
+      <h3>Alcance del MVP</h3>
+      <dl class="kv">
+        <dt>Catálogo</dt><dd>78 Must y 23 Should de 110 ítems</dd>
+        <dt>Requisitos</dt><dd>112 funcionales, 36 no funcionales, 20 escenarios Gherkin</dd>
+        <dt>Canales</dt><dd>WhatsApp, chat web, SMS y email; voz en la fase 1.5</dd>
+        <dt>Idiomas</dt><dd>Variantes locales del español y pt-BR listo para el primer tenant brasileño</dd>
+        <dt>Fase 2</dt><dd>AG-KYC y AG-COP</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ECONOMÍA -->
+<section class="sec" id="economia">
+  <div class="sec-head">
+    <div class="eyebrow">Cuánto cuesta operarlo</div>
+    <h2>Economía de la plataforma</h2>
+    <div class="src">Fuentes: WP08 Costos y unit economics y Gate 2 §4.2 y §4.5. Precios oficiales de AWS y Meta consultados el 16 nov 2026. Costos de nube y canal en USD al mes, sin personas.</div>
+  </div>
+
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Escenario de cobranza</th><th class="num">Piloto</th><th class="num">Lanzamiento</th><th class="num">Escala</th></tr></thead>
+      <tbody>
+        <tr><td>Volumen<span class="sub">Tenants · conversaciones de atención y de cobranza por mes</span></td><td class="num">1 · 10k + 6k</td><td class="num">3 · 60k + 36k</td><td class="num">10 · 300k + 180k</td></tr>
+        <tr><td>A · Meta permite cobrar por WhatsApp<span class="sub">Con voz · sin voz</span></td><td class="num">8,390<span class="sub">7,898</span></td><td class="num">38,975<span class="sub">36,109</span></td><td class="num">149,395<span class="sub">128,075</span></td></tr>
+        <tr class="base"><td><b>B · Caso base</b><span class="sub">WhatsApp solo para recordatorios antes del vencimiento; la mora va por SMS, voz y email. Con voz · sin voz</span></td><td class="num"><b>9,566</b><span class="sub">9,074</span></td><td class="num"><b>47,299</b><span class="sub">44,433</span></td><td class="num"><b>168,224</b><span class="sub">146,905</span></td></tr>
+        <tr><td>B-estricto<span class="sub">Sensibilidad con supuestos de canal más exigentes, con voz</span></td><td class="num">10,819</td><td class="num">55,432</td><td class="num">193,789</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted" style="font-size:13px;margin-top:10px">La voz llega en la fase 1.5 (semana 17 en adelante); antes, rige la cifra "sin voz". A y B se comparan siempre con la misma voz: en lanzamiento, B cuesta 1.21 veces lo que cuesta A.</p>
+
+  <div class="grid2 mt">
+    <div class="chart">
+      <div class="chart-title">
+        <h3>Costo por unidad frente a su techo</h3>
+        <p>Pila de IA e infraestructura sin canal, en USD. La línea vertical marca el techo definido en el PRD.</p>
+      </div>
+      <div class="hbar" role="img" aria-label="Atención 0.062 con techo 0.15; cobranza 0.126 con techo 0.25; pieza de contenido 0.24 con techo 0.40">
+        <div class="hrow"><span class="hlab">Atención (AG-ATC)</span><div class="htrack"><div class="hfill" style="width:15.5%" data-tip="Atención: USD 0.062 por conversación. Techo 0.15. Todo en Sonnet sería 0.112."></div><div class="hceil" style="left:37.5%"></div></div><span class="hval">0.062 <span>/ 0.15</span></span></div>
+        <div class="hrow"><span class="hlab">Cobranza (AG-COB)</span><div class="htrack"><div class="hfill" style="width:31.5%" data-tip="Cobranza: USD 0.126 por conversación. Techo 0.25. La mora atendida en Sonnet cuesta 0.198."></div><div class="hceil" style="left:62.5%"></div></div><span class="hval">0.126 <span>/ 0.25</span></span></div>
+        <div class="hrow"><span class="hlab">Pieza (AG-CON)</span><div class="htrack"><div class="hfill" style="width:60%" data-tip="Pieza de contenido: USD 0.24. Techo 0.40."></div><div class="hceil" style="left:calc(100% - 2px)"></div></div><span class="hval">0.24 <span>/ 0.40</span></span></div>
+        <div class="axis" aria-hidden="true"><span></span><div class="axis-scale"><span style="left:0">0</span><span style="left:25%">0.10</span><span style="left:50%">0.20</span><span style="left:75%">0.30</span><span style="left:100%">0.40</span></div><span></span></div>
+      </div>
+      <p class="muted" style="font-size:13px">Con el canal de México, una conversación de atención cuesta 0.135 en total y una de cobranza con sus plantillas, 0.304.</p>
+    </div>
+
+    <div class="chart">
+      <div class="chart-title">
+        <h3>En qué se va el dinero en lanzamiento</h3>
+        <p>Escenario B con voz: USD 47,299 al mes.</p>
+      </div>
+      <div class="sbar" role="img" aria-label="Canales 60 por ciento, plataforma e infraestructura 25 por ciento, IA 7.6 por ciento, calidad 7.2 por ciento">
+        <div class="k1" style="flex:28450" data-tip="Canales: USD 28,450 (60.2%)"></div>
+        <div class="k2" style="flex:11853" data-tip="Plataforma e infraestructura: USD 11,853 (25.1%)"></div>
+        <div class="k3" style="flex:3596" data-tip="IA (LLM de los agentes): USD 3,596 (7.6%)"></div>
+        <div class="k4" style="flex:3400" data-tip="Calidad (evals offline): USD 3,400 (7.2%)"></div>
+      </div>
+      <div class="legend"><span><i class="k1"></i>Canales 60%</span><span><i class="k2"></i>Plataforma e infraestructura 25%</span><span><i class="k3"></i>IA 7.6%</span><span><i class="k4"></i>Calidad 7.2%</span></div>
+      <div class="items" role="table" aria-label="Desglose mensual en lanzamiento">
+        <div class="irow" role="row"><span role="cell">SMS de mora</span><div class="itrack" role="cell"><div class="ifill k1" style="width:100%" data-tip="SMS de mora: USD 17,402"></div></div><span class="ival" role="cell">17,402 <span>36.8%</span></span></div>
+        <div class="irow" role="row"><span role="cell">Fijos de nube</span><div class="itrack" role="cell"><div class="ifill k2" style="width:35.2%" data-tip="Fijos de nube: USD 6,117"></div></div><span class="ival" role="cell">6,117 <span>12.9%</span></span></div>
+        <div class="irow" role="row"><span role="cell">Meta (WhatsApp)</span><div class="itrack" role="cell"><div class="ifill k1" style="width:33.8%" data-tip="Meta WhatsApp: USD 5,874"></div></div><span class="ival" role="cell">5,874 <span>12.4%</span></span></div>
+        <div class="irow" role="row"><span role="cell">Soporte AWS</span><div class="itrack" role="cell"><div class="ifill k2" style="width:28.7%" data-tip="Soporte AWS: USD 5,000"></div></div><span class="ival" role="cell">5,000 <span>10.6%</span></span></div>
+        <div class="irow" role="row"><span role="cell">Evals offline</span><div class="itrack" role="cell"><div class="ifill k4" style="width:19.5%" data-tip="Evals offline: USD 3,400"></div></div><span class="ival" role="cell">3,400 <span>7.2%</span></span></div>
+        <div class="irow" role="row"><span role="cell">LLM de atención</span><div class="itrack" role="cell"><div class="ifill k3" style="width:19%" data-tip="LLM AG-ATC: USD 3,313"></div></div><span class="ival" role="cell">3,313 <span>7.0%</span></span></div>
+        <div class="irow" role="row"><span role="cell">Voz (Connect y telefonía)</span><div class="itrack" role="cell"><div class="ifill k1" style="width:14.9%" data-tip="Voz: USD 2,600"></div></div><span class="ival" role="cell">2,600 <span>5.5%</span></span></div>
+        <div class="irow" role="row"><span role="cell">AWS End User Messaging</span><div class="itrack" role="cell"><div class="ifill k1" style="width:14.8%" data-tip="AWS End User Messaging Social: USD 2,574"></div></div><span class="ival" role="cell">2,574 <span>5.4%</span></span></div>
+        <div class="irow" role="row"><span role="cell">Plataforma variable</span><div class="itrack" role="cell"><div class="ifill k2" style="width:4.2%" data-tip="Plataforma variable: USD 736"></div></div><span class="ival" role="cell">736 <span>1.6%</span></span></div>
+        <div class="irow" role="row"><span role="cell">LLM de cobranza y voz</span><div class="itrack" role="cell"><div class="ifill k3" style="width:1.35%" data-tip="LLM AG-COB preventiva y voz: USD 235"></div></div><span class="ival" role="cell">235 <span>0.5%</span></span></div>
+        <div class="irow" role="row"><span role="cell">LLM de contenido</span><div class="itrack" role="cell"><div class="ifill k3" style="width:.3%" data-tip="LLM AG-CON: USD 48"></div></div><span class="ival" role="cell">48 <span>0.1%</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3 mt">
+    <div class="callout"><h3>El canal pesa más que la IA</h3><p class="muted">En lanzamiento, el SMS de mora es el 37% del costo y el LLM de conversación solo el 7.6%. Las palancas grandes son de canal: si Meta confirma el escenario A, se ahorran unos USD 8.3 mil al mes (17.6%).</p></div>
+    <div class="callout warn"><h3>Pisos de precio</h3><p class="muted">Para cumplir la meta de margen bruto (65% en lanzamiento): cobranza desde USD 0.34 por contacto en el escenario B (0.24 en A con voz), y contenido desde 0.69 por pieza. La resolución de atención va de 0.37 en Colombia a 0.89 en Perú.</p></div>
+    <div class="callout risk"><h3>El −75% es falta de precio, no de margen</h3><p class="muted">Sin cobrar cobranza ni contenido, y sumando las personas que atienden a cada cliente, el margen en lanzamiento sería −75%. Si cobranza y contenido se cobran a su piso, la contribución queda en ≈30% en lanzamiento y ≈61% en escala. El piloto es una inversión: cuesta ≈ USD 29.8 mil al mes, frente a 8 mil de ingreso hipotético.</p></div>
+  </div>
+
+  <div class="tbl mt">
+    <table>
+      <thead><tr><th>País</th><th class="num">SMS (USD)</th><th class="num">WhatsApp utility (USD)</th><th class="num">Atención por conversación</th><th class="num">Piso por resolución</th><th class="num">Margen bruto en escala</th></tr></thead>
+      <tbody>
+        <tr><td>México <span class="chip ok" style="margin-left:6px">Piloto</span></td><td class="num">0.100</td><td class="num">0.0085</td><td class="num">0.124</td><td class="num">0.51</td><td class="num">82%</td></tr>
+        <tr><td>Colombia</td><td class="num">0.051</td><td class="num">0.0008</td><td class="num">0.091</td><td class="num">0.37</td><td class="num">86%</td></tr>
+        <tr><td>Brasil</td><td class="num">0.030</td><td class="num">0.0068</td><td class="num">0.117</td><td class="num">0.48</td><td class="num">82%</td></tr>
+        <tr><td>Perú</td><td class="num">0.233</td><td class="num">0.0300</td><td class="num">0.217</td><td class="num">0.89</td><td class="num">73%</td></tr>
+        <tr><td>Chile</td><td class="num">0.052</td><td class="num">0.0200</td><td class="num">0.174</td><td class="num">0.71</td><td class="num">75%</td></tr>
+        <tr><td>Argentina</td><td class="num">0.094</td><td class="num">0.0260</td><td class="num">0.200</td><td class="num">0.82</td><td class="num">74%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted mt" style="font-size:13px">El SMS es el precio oficial de AWS End User Messaging. La tarifa utility de WhatsApp es el canon del Gate 1, confirmado contra el rate card oficial de Meta. "Atención por conversación" suma la pila de IA y el canal. "Piso por resolución" es el precio mínimo de una resolución de atención para un 65% de margen variable en lanzamiento. El margen bruto, solo de nube y canal, usa el bloque de atención y plataforma con la hipótesis de precio "medio" de WP01. Con 100% del volumen en Perú, el costo total en lanzamiento es 2.2 veces el de Colombia.</p>
+</section>
+
+<!-- ARQUITECTURA -->
+<section class="sec" id="arquitectura">
+  <div class="sec-head">
+    <div class="eyebrow">Cómo funciona</div>
+    <h2>Arquitectura en AWS</h2>
+    <div class="src">Fuente: WP03 Arquitectura AWS, versión 1.1</div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Decisiones de fondo</h3>
+      <ul class="list">
+        <li><b>Celda del MVP en São Paulo (sa-east-1).</b> Es la única región de LatAm con AgentCore, WhatsApp de AWS, Bedrock y S3 Vectors. México no tiene AgentCore y Chile está en acceso anticipado.</li>
+        <li><b>Claude 5.5 no tiene inferencia en LatAm.</b> Los agentes llaman a Bedrock en us-east-1 con el perfil <code>us.</code>, acotado a tres regiones de EE. UU. Antes de salir de la celda, un filtro de datos personales reemplaza los identificadores por alias.</li>
+        <li><b>Multi-tenant con aislamiento fuerte:</b> token de contexto firmado, permisos por etiquetas, un gateway de herramientas por operación de país, cifrado por campo con claves de cada tenant y 16 pruebas automáticas de aislamiento.</li>
+        <li><b>Voz e imágenes fuera de LatAm,</b> en satélites con datos temporales de hasta 24 h. Amazon Connect no existe en sa-east-1.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Piezas y objetivos</h3>
+      <dl class="kv">
+        <dt>Agentes</dt><dd>Strands Agents (Python) sobre AgentCore Runtime</dd>
+        <dt>Workflows</dt><dd>Step Functions y EventBridge Scheduler</dd>
+        <dt>Conocimiento</dt><dd>S3 Vectors, un índice por operación de país</dd>
+        <dt>Consola</dt><dd>React en S3 y CloudFront, API por celda, Cognito</dd>
+        <dt>Infraestructura</dt><dd>AWS CDK en TypeScript, 5 pipelines con gates de evals</dd>
+        <dt>Disponibilidad</dt><dd>99.5% con Multi-AZ</dd>
+        <dt>Recuperación</dt><dd>Hasta 15 min de datos perdidos; 4 h por componente, 24 h si cae la celda</dd>
+        <dt>Pico en escala</dt><dd>4 mensajes/s, 556 sesiones, 29 llamadas simultáneas</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="stack mt">
+    <figure class="dg">
+      <figcaption><b>Contexto del sistema</b><span>WP03 §2.2.1</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart LR
+  EU["Usuario final&lt;br/&gt;deudor, cliente o prospecto"]
+  OP["Operadores del tenant&lt;br/&gt;CX, cobranza, marketing, compliance"]
+  SV["Equipo Sora&lt;br/&gt;Ops, FDE, soporte"]
+  SAP["Sora Agents Platform&lt;br/&gt;AG-RTR, AG-ATC, AG-COB, AG-CON&lt;br/&gt;consola, workflows, metering"]
+  META["Meta&lt;br/&gt;WhatsApp Business Platform&lt;br/&gt;Graph API Instagram y Facebook"]
+  TEL["Telefonía PSTN&lt;br/&gt;operadores locales"]
+  TEN["Sistemas del tenant&lt;br/&gt;core de crédito, CRM, helpdesk"]
+  PSP["PSP del tenant&lt;br/&gt;links y referencias de pago"]
+  CORE["Sora Core&lt;br/&gt;Collect, Pulse, Origin, Audience"]
+  BDK["AWS Bedrock&lt;br/&gt;Claude, Nova, Stability"]
+  IDP["IdP del tenant&lt;br/&gt;SAML u OIDC opcional"]
+  FAC["Facturación electrónica&lt;br/&gt;proveedor por país"]
+
+  EU &lt;--&gt;|"WhatsApp, web chat"| SAP
+  EU &lt;--&gt;|"llamadas voz"| TEL
+  TEL &lt;--&gt; SAP
+  SAP &lt;--&gt;|"mensajes, plantillas, publicaciones"| META
+  META &lt;--&gt; EU
+  OP --&gt;|"configuración, aprobaciones, auditoría"| SAP
+  SV --&gt;|"operación y soporte"| SAP
+  SAP &lt;--&gt;|"herramientas T-xx por API"| TEN
+  SAP --&gt;|"links de pago"| PSP
+  SAP &lt;--&gt;|"next-best-action, feedback"| CORE
+  SAP --&gt;|"inferencia y embeddings"| BDK
+  IDP -.-&gt;|"SSO de operadores"| SAP
+  SAP -.-&gt;|"uso facturable"| FAC
+</pre></div>
+      <p class="dg-note">Quién habla con la plataforma: usuarios finales por WhatsApp, chat web y voz; operadores del tenant desde la consola; los sistemas del tenant por API; y Sora Core con la siguiente mejor acción.</p>
+    </figure>
+    <figure class="dg">
+      <figcaption><b>Ruta de inferencia de Claude 5.5</b><span>WP03 §2.7.2</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart LR
+  subgraph CELLA["Celda A, sa-east-1, datos en reposo"]
+    AG["C-08 Agentes&lt;br/&gt;PII shield ya aplicado"]
+    MAL["C-15 Model Access Layer"]
+  end
+  subgraph R1["Ruta R1, por defecto"]
+    E1["bedrock-runtime us-east-1&lt;br/&gt;perfil us.anthropic.claude-sonnet-5-5"]
+    D1["Procesa solo en&lt;br/&gt;us-east-1, us-east-2, us-west-2"]
+  end
+  subgraph R2["Ruta R2, opt-in o fallback"]
+    E2["bedrock-runtime sa-east-1&lt;br/&gt;perfil global.anthropic.claude-sonnet-5-5"]
+    D2["Procesa en cualquier&lt;br/&gt;región comercial"]
+  end
+  subgraph R3["Ruta R3, no existe"]
+    E3["Claude 5.5 en región&lt;br/&gt;en LatAm"]
+  end
+  subgraph SAT["Satélites, solo datos temporales"]
+    VOZ["us-east-1&lt;br/&gt;Connect, Transcribe, Haiku y Polly&lt;br/&gt;grabaciones hasta 24 h"]
+    IMG["us-west-2&lt;br/&gt;Stable Image Core 1.0 para fondos&lt;br/&gt;sin datos personales"]
+  end
+  AG --&gt; MAL
+  MAL --&gt;|"principal"| E1
+  E1 --&gt; D1
+  MAL -.-&gt;|"opción por operación&lt;br/&gt;o fallback de capacidad"| E2
+  E2 --&gt; D2
+  MAL -.-&gt; E3
+  AG -.-&gt;|"herramientas por Gateway"| VOZ
+  MAL -.-&gt;|"AG-CON"| IMG
+</pre></div>
+      <p class="dg-note">Los datos en reposo quedan en São Paulo. La inferencia sale a EE. UU. por la ruta R1; el perfil global queda solo como opción o respaldo. Para Legal, esto es una transferencia internacional.</p>
+    </figure>
+    <figure class="dg">
+      <figcaption><b>Red de la celda de producción</b><span>WP03 §2.5.1</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart TB
+  NET["Internet"]
+  CFW["CloudFront y WAF&lt;br/&gt;widget, consola, WebSocket"]
+  subgraph VPC["VPC celda A prod, 10.20.0.0/16, sa-east-1"]
+    subgraph AZA["AZ sae1-az1"]
+      PUA["subnet pública a&lt;br/&gt;NAT Gateway, IP elástica 1"]
+      PRA["subnet privada app a&lt;br/&gt;ENIs de AgentCore y Lambda en VPC"]
+    end
+    subgraph AZB["AZ sae1-az2"]
+      PUB["subnet pública b&lt;br/&gt;NAT Gateway, IP elástica 2"]
+      PRB["subnet privada app b"]
+    end
+    subgraph AZC["AZ sae1-az3"]
+      PUC["subnet pública c&lt;br/&gt;NAT Gateway, IP elástica 3"]
+      PRC["subnet privada app c"]
+    end
+    EPS["Endpoints de la VPC&lt;br/&gt;gateway: S3 y DynamoDB&lt;br/&gt;interface: AgentCore, ECR, Secrets Manager,&lt;br/&gt;KMS, Logs, STS, SQS, Events, States, S3 Vectors"]
+  end
+  TEN["Sistemas del tenant&lt;br/&gt;lista blanca de 3 IP"]
+  CORE["Sora Core"]
+  BRU["Bedrock us-east-1&lt;br/&gt;perfil us."]
+  CFW --&gt; NET
+  PRA --&gt; EPS
+  PRB --&gt; EPS
+  PRC --&gt; EPS
+  PRA --&gt; PUA
+  PRB --&gt; PUB
+  PRC --&gt; PUC
+  PUA --&gt; NET
+  PUB --&gt; NET
+  PUC --&gt; NET
+  NET --&gt;|"TLS, IP fija"| TEN
+  NET --&gt;|"TLS mutuo o PrivateLink"| CORE
+  NET --&gt;|"HTTPS SigV4 sobre red AWS"| BRU
+</pre></div>
+      <p class="dg-note">Tres zonas de disponibilidad. La salida usa tres IP fijas, que el tenant pone en su lista blanca. Los servicios de AWS se alcanzan por endpoints privados.</p>
+    </figure>
+    <figure class="dg">
+      <figcaption><b>Recuperación ante desastres</b><span>WP03 §2.10.4</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart TB
+  subgraph PRIM["Celda A, sa-east-1, producción"]
+    DDBP["C-24 DynamoDB&lt;br/&gt;PITR 35 días"]
+    S3P["C-25 S3 archivo&lt;br/&gt;versionado y Object Lock"]
+    BKP["AWS Backup vault&lt;br/&gt;misma región, vault lock"]
+    DDBP --&gt; BKP
+    S3P --&gt; BKP
+  end
+  subgraph IAC["Shared Services"]
+    PIPE["CDK Pipelines&lt;br/&gt;manifiesto de celda"]
+  end
+  subgraph DR1["Región de DR autorizada"]
+    CELD["Celda vacía recreada por IaC&lt;br/&gt;us-east-1 sin WABA&lt;br/&gt;o mx-central-1 si existe celda B"]
+    REST["Restauración de datos&lt;br/&gt;solo si LEGAL autoriza copias"]
+  end
+  DET["Detección y declaración&lt;br/&gt;RB-09, decisión de Sora"] --&gt; PIPE
+  PIPE --&gt;|"RTO hasta 24 h"| CELD
+  BKP -.-&gt;|"copia cifrada diaria&lt;br/&gt;solo con autorización legal"| REST
+  REST --&gt; CELD
+  CELD --&gt; RELINK["Volver a vincular WABA y directorio&lt;br/&gt;SMS de respaldo mientras tanto"]
+  RELINK --&gt; OPS["Servicio reanudado&lt;br/&gt;historia solo si hubo copia"]
+</pre></div>
+      <p class="dg-note">Respaldo y restauración, más una celda vacía recreada por código en otra región. La historia solo se recupera si Legal autoriza copias cifradas fuera del país.</p>
+    </figure>
+  </div>
+</section>
+
+<!-- AGENTES -->
+<section class="sec" id="agentes">
+  <div class="sec-head">
+    <div class="eyebrow">Cómo deciden</div>
+    <h2>Agentes, políticas y workflows</h2>
+    <div class="src">Fuente: WP04 Agentes y workflows</div>
+  </div>
+  <div class="grid3">
+    <div class="card"><h3>Tres capas de control</h3><p class="muted">Cedar en el gateway de herramientas (nivel de autenticación, herramienta habilitada, topes duros), un servicio de reglas con los datos de la cuenta, y un motor de ofertas que calcula los planes.</p></div>
+    <div class="card"><h3>20 reglas de política</h3><p class="muted"><code>POL-R01</code> a <code>POL-R20</code>. Seis cambian por país: ventana horaria, frecuencia, divulgación, pausa de cobranza, aviso de grabación y leyendas publicitarias. Todas pendientes de revisión legal.</p></div>
+    <div class="card"><h3>8 workflows deterministas</h3><p class="muted">W-01 cadencia de cobranza, W-02 promesa, W-03 plan de pagos, W-04 contenido, W-05 traspaso a humano, W-06 base de conocimiento, W-07 onboarding, W-08 opt-out y derechos. Todo contacto saliente nace en un workflow, nunca en el LLM.</p></div>
+  </div>
+  <div class="stack mt">
+    <figure class="dg">
+      <figcaption><b>Orquestación general</b><span>WP04 Diagrama 2.1-A</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart LR
+  EU["Usuario final&lt;br/&gt;WhatsApp, web, voz"] --&gt; C06["C-06 Ingress&lt;br/&gt;dedupe, orden FIFO, opt-out por palabra clave"]
+  C06 --&gt; C07["C-07 / AG-RTR&lt;br/&gt;resolver tenant y pais, clasificar intent"]
+  C07 --&gt;|"dominio atencion"| ATC["AG-ATC&lt;br/&gt;C-08 Runtime"]
+  C07 --&gt;|"dominio cobranza"| COB["AG-COB&lt;br/&gt;C-08 Runtime"]
+  C07 --&gt;|"urgencia, fraude, vulnerabilidad"| W05["W-05 Handoff&lt;br/&gt;C-16"]
+  C07 --&gt;|"opt-out"| W08["W-08 Opt-out y derechos&lt;br/&gt;C-16"]
+  ATC &lt;--&gt;|"handover con dueno unico"| COB
+  ATC --&gt; C10["C-10 Tool Gateway MCP&lt;br/&gt;Cedar en el borde"]
+  COB --&gt; C10
+  C10 --&gt; C13["C-13 Rules Service y Offer Engine"]
+  C10 --&gt; C19["C-19 / C-20 / C-21&lt;br/&gt;core del tenant, Sora Core, PSP"]
+  ATC --&gt; C14["C-14 Knowledge RAG"]
+  COB --&gt; C14
+  ATC --&gt; C15["C-15 Model Access&lt;br/&gt;Bedrock"]
+  COB --&gt; C15
+  ATC --&gt; C09["C-09 Memory"]
+  COB --&gt; C09
+  C17["C-17 Scheduler y Campaign Engine"] --&gt; W01["W-01 Cadencia de cobranza"]
+  W01 --&gt;|"T-10 next-action"| C20["C-20 Sora Core Connector"]
+  W01 --&gt;|"T-28 solo workflows"| C01["C-01 WhatsApp Adapter"]
+  W02["W-02 Promesa"] --&gt; C01
+  W03["W-03 Plan de pagos"] --&gt; C19
+  CON["AG-CON&lt;br/&gt;C-08 Runtime"] --&gt; C10
+  W04["W-04 Pipeline de contenido"] --&gt;|"modo tarea"| CON
+  W04 --&gt;|"T-23, T-24, T-25"| C10
+  W05 --&gt; C22["C-22 Handoff e Inbox"]
+  C10 --&gt;|"eventos de dominio"| C18["C-18 Event Bus"]
+  C18 --&gt; W02
+  C18 --&gt; W03
+  C18 --&gt; W01
+  C18 --&gt; C25["C-25 Archivo / C-27 Feedback a Sora Core"]
+</pre></div>
+      <p class="dg-note">El router entrega cada mensaje a un agente o a un workflow. Las herramientas pasan siempre por el gateway y el servicio de reglas antes de tocar el core del tenant, Sora Core o la pasarela de pagos.</p>
+    </figure>
+    <figure class="dg">
+      <figcaption><b>Conversación de cobranza (AG-COB)</b><span>WP04 §2.3.3</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+stateDiagram-v2
+  [*] --&gt; PlantillaEnviada: W-01 envia T-28
+  [*] --&gt; InboundMora: inbound o handover desde ATC
+  PlantillaEnviada --&gt; EsperandoRespuesta
+  EsperandoRespuesta --&gt; RespuestaRecibida: el usuario responde en 24 h
+  EsperandoRespuesta --&gt; VentanaVencida: 24 h sin respuesta
+  VentanaVencida --&gt; [*]: W-01 reprograma
+  RespuestaRecibida --&gt; Compuerta
+  InboundMora --&gt; Compuerta
+  Compuerta --&gt; TerceroOErroneo: no soy esa persona
+  TerceroOErroneo --&gt; [*]: sin divulgar y marca numero erroneo
+  Compuerta --&gt; DesafioL1: titular probable
+  DesafioL1 --&gt; NivelL1: verificacion correcta
+  DesafioL1 --&gt; Bloqueada: 3 fallos
+  Bloqueada --&gt; Escalando: posible tercero o fraude
+  NivelL1 --&gt; Dialogo
+  Dialogo --&gt; LinkPago: pagar ahora
+  Dialogo --&gt; Promesa: promesa de pago
+  Dialogo --&gt; DesafioL2: plan o descuento
+  DesafioL2 --&gt; NivelL2: OTP correcto
+  DesafioL2 --&gt; Escalando: OTP fallido
+  NivelL2 --&gt; Plan: opciones del motor
+  Plan --&gt; Confirmando: el usuario elige una opcion
+  Confirmando --&gt; PlanFormalizado: boton de confirmacion
+  Dialogo --&gt; YaPague: dice que ya pago
+  YaPague --&gt; Dialogo: pago verificado o caso abierto
+  Dialogo --&gt; DisputaPausa: no reconozco la deuda
+  DisputaPausa --&gt; Escalando
+  Dialogo --&gt; Vulnerable: dificultad economica o vulnerabilidad
+  Vulnerable --&gt; Dialogo: protocolo de empatia sin presion
+  Vulnerable --&gt; Escalando
+  Dialogo --&gt; OptOut: no me contacten
+  OptOut --&gt; [*]
+  Dialogo --&gt; Escalando: pide persona o queja de hostigamiento
+  LinkPago --&gt; Cerrando
+  Promesa --&gt; Cerrando
+  PlanFormalizado --&gt; Cerrando
+  Cerrando --&gt; [*]
+  Escalando --&gt; [*]: W-05
+</pre></div>
+      <p class="dg-note">Antes de mencionar la deuda, el agente verifica la identidad (L1). Para un plan o un descuento pide un segundo factor (L2). Ante un tercero, una disputa o un cliente vulnerable, pausa la cobranza o escala a una persona.</p>
+    </figure>
+    <figure class="dg">
+      <figcaption><b>W-01 · Cadencia de cobranza</b><span>WP04 §2.4.1</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart TB
+  S0["Disparo diario por operacion de pais&lt;br/&gt;C-17 EventBridge Scheduler"] --&gt; S1["Seleccionar cuentas en gestion D-5 a D+90&lt;br/&gt;Distributed Map"]
+  S1 --&gt; S2{"Exclusiones&lt;br/&gt;opt-out, no llamar, disputa, vulnerable,&lt;br/&gt;promesa vigente, pago reciente, numero erroneo"}
+  S2 --&gt;|"excluida"| X1["Evento contact.skipped con motivo"]
+  S2 --&gt;|"elegible"| S3["T-10 next-best-action&lt;br/&gt;Sora Collect via C-20"]
+  S3 --&gt;|"timeout o error"| S3b["Cadencia de respaldo del tenant"]
+  S3 --&gt; S4{"C-13 decision de contacto&lt;br/&gt;POL-R04 POL-R05 POL-R07 POL-R09 POL-R10"}
+  S3b --&gt; S4
+  S4 --&gt;|"deny"| X1
+  S4 --&gt;|"defer"| S5["Nuevo send_at dentro de la ventana&lt;br/&gt;maximo 3 dias"]
+  S4 --&gt;|"allow"| S5c["Resolver el canal con la cadena configurable&lt;br/&gt;T-10, etapa, wa_collection_enabled, consentimiento, voz habilitada"]
+  S5 --&gt; S5c
+  S5c --&gt;|"sin canal permitido"| X2["Omitir y alertar al tenant"]
+  S5c --&gt; S6["Seleccionar plantilla aprobada del canal&lt;br/&gt;etapa, oferta, tono, idioma, pais"]
+  S6 --&gt;|"sin plantilla aprobada"| X2
+  S6 --&gt; S7["Crear schedule puntual en send_at&lt;br/&gt;EventBridge Scheduler"]
+  S7 --&gt; S8["Al llegar send_at revalidar con C-13&lt;br/&gt;pago, opt-out, disputa, ventana"]
+  S8 --&gt;|"estado cambio"| X1
+  S8 --&gt; S9["T-28 con channel&lt;br/&gt;C-01 WhatsApp, C-04 SMS o email, C-03 llamada&lt;br/&gt;T-29 registrar la gestion"]
+  S9 --&gt; S10{"Esperar respuesta&lt;br/&gt;temporizador de 24 h"}
+  S10 --&gt;|"mensaje entrante"| S11["Conversacion con AG-COB&lt;br/&gt;pausa nuevos envios"]
+  S10 --&gt;|"entrega fallida"| S12["Siguiente paso de la cadencia&lt;br/&gt;otro canal permitido"]
+  S10 --&gt;|"sin respuesta"| S13["Reprogramar siguiente evaluacion&lt;br/&gt;feedback de resultado a Sora Core"]
+  S11 --&gt; S13
+  S12 --&gt; S13
+</pre></div>
+      <p class="dg-note">El canal se elige con una cadena configurable. Con <code>wa_collection_enabled</code> apagado, la mora sale por SMS, voz o email. Antes de enviar, se revalida la política al momento del envío.</p>
+    </figure>
+  </div>
+</section>
+
+<!-- CANALES -->
+<section class="sec" id="canales">
+  <div class="sec-head">
+    <div class="eyebrow">Por dónde habla</div>
+    <h2>Canales e integraciones</h2>
+    <div class="src">Fuente: WP05 Canales e integraciones</div>
+  </div>
+  <div class="grid2">
+    <div class="callout risk">
+      <h3>Meta prohíbe la cobranza de deudas en WhatsApp</h3>
+      <p class="muted">La política de WhatsApp Business del 23 sep 2026 lista "debt collection" como actividad prohibida, aun con licencias locales. No aclara si un prestamista que recuerda a sus propios clientes cuenta como cobranza. Mientras Meta no lo confirme por escrito, el caso base (escenario B) usa WhatsApp solo para atención y recordatorios antes del vencimiento.</p>
+    </div>
+    <div class="card">
+      <h3>Decisiones de canal</h3>
+      <ul class="list">
+        <li><b>WhatsApp</b> por AWS End User Messaging Social en el MVP, detrás de un puerto intercambiable. En lanzamiento se evalúa pasar a la Cloud API de Meta, que ahorra unos USD 2.2 mil al mes. La WABA siempre es del tenant.</li>
+        <li><b>Desde el 1 oct 2026</b> Meta cobra los mensajes de servicio y utility dentro de la ventana de 24 h. Hay 1,000 de servicio gratis por número y mes.</li>
+        <li><b>Voz en la fase 1.5:</b> solo cobranza saliente en México, con Connect, Transcribe, Haiku 5.5 y Polly.</li>
+        <li><b>Contrato con el tenant:</b> 20 endpoints, 11 eventos y un lote de 5 archivos, con sandbox y suite de conformidad.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stack mt">
+    <figure class="dg">
+      <figcaption><b>Vista de conjunto de canales</b><span>WP05 §2.0</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart LR
+  EU["Usuario final"] --&gt; WAm["WhatsApp de Meta"]
+  EU --&gt; WEB["Sitio o app del tenant"]
+  EU --&gt; PSTN["Telefonía PSTN"]
+  EU --&gt; SMSm["SMS y email"]
+  subgraph CH["Canales de Sora en la celda"]
+    C01["C-01 WhatsApp Adapter&lt;br/&gt;End User Messaging Social"]
+    C02["C-02 Web Chat Gateway&lt;br/&gt;API Gateway WebSocket"]
+    C03["C-03 Voice Gateway&lt;br/&gt;Amazon Connect us-east-1"]
+    C04["C-04 SMS y Email Adapter"]
+    C05["C-05 Social Publishing Adapter"]
+  end
+  WAm &lt;--&gt; C01
+  WEB &lt;--&gt; C02
+  PSTN &lt;--&gt; C03
+  SMSm &lt;--&gt; C04
+  C01 --&gt; C06["C-06 Ingress y normalización"]
+  C02 --&gt; C06
+  C04 --&gt; C06
+  C06 --&gt; C07["C-07 Router AG-RTR"]
+  C07 --&gt; C08["C-08 Agent Runtime&lt;br/&gt;AG-ATC y AG-COB"]
+  C03 &lt;--&gt; C08
+  C16["C-16 Workflows W-01 a W-08"] --&gt; C01
+  C16 --&gt; C03
+  C16 --&gt; C04
+  C16 --&gt; C05
+  C08 --&gt; C22["C-22 Handoff e Inbox"]
+  C22 --&gt; C01
+  C22 --&gt; C02
+  C05 --&gt; META["Meta Graph API&lt;br/&gt;Instagram y Facebook"]
+</pre></div>
+      <p class="dg-note">Cinco adaptadores de canal (C-01 a C-05) normalizan la entrada hacia el router. Los envíos salientes solo salen de workflows o de la bandeja de traspaso a humano.</p>
+    </figure>
+  </div>
+</section>
+
+<!-- CONFIANZA -->
+<section class="sec" id="confianza">
+  <div class="sec-head">
+    <div class="eyebrow">Por qué confiar</div>
+    <h2>Seguridad, privacidad y cumplimiento</h2>
+    <div class="src">Fuente: WP06 Seguridad y cumplimiento. Todo punto regulatorio está sujeto a validación legal.</div>
+  </div>
+  <div class="grid3">
+    <div class="card"><h3>La inferencia cruza fronteras</h3><p class="muted">Desde cualquier país núcleo, los prompts salen a EE. UU. La celda decide dónde viven los datos, no dónde se procesan. Por eso el LLM solo recibe datos tokenizados, que aun así siguen siendo datos personales.</p></div>
+    <div class="card"><h3>Bedrock sin retención</h3><p class="muted">El modo de retención cero se impone con una SCP. Hay que confirmar que Sonnet, Haiku y Opus 5.5 lo aceptan; si un modelo no lo acepta, queda bloqueado en producción.</p></div>
+    <div class="card"><h3>Cobranza por país</h3><p class="muted">Colombia es la más estricta (Ley 2300): lunes a viernes de 7 a 19 h, sábados de 8 a 15 h, nunca domingos ni festivos, un solo canal por semana y prohibido preguntar el motivo del atraso. Perú prohíbe contactar de 20 a 7 h y los fines de semana.</p></div>
+    <div class="card"><h3>Chile, fecha incierta</h3><p class="muted">La Ley 21.719 entra en vigor el 1 dic 2026, pero hay un proyecto que la pospone al 15 oct 2027. Se diseña con el estándar de la nueva ley desde ya.</p></div>
+    <div class="card"><h3>26 preguntas legales</h3><p class="muted">14 bloquean el piloto, entre ellas la transferencia internacional por inferencia, la grabación de llamadas y si Sora cuenta como despacho de cobranza.</p></div>
+    <div class="card"><h3>Llaves por tenant</h3><p class="muted">Cada tenant tiene sus propias claves para S3, secretos y campos de DynamoDB. Al salir un tenant, se exportan sus datos y se programa la eliminación de sus llaves.</p></div>
+  </div>
+  <div class="stack mt">
+    <figure class="dg">
+      <figcaption><b>Cifrado y llaves por tenant</b><span>WP06 §2.5.2</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart TB
+  subgraph ORG["Cuenta Security y Log Archive"]
+    KLOG["CMK org-logs&lt;br/&gt;CloudTrail y logs de plataforma"]
+    KSIGN["CMK asimetrica audit-signing&lt;br/&gt;firma de digests de auditoria"]
+  end
+  subgraph TA["Tenant A"]
+    KAD["CMK tenant-A-data&lt;br/&gt;S3, logs, archivo"]
+    KAF["Claves de datos del tenant A&lt;br/&gt;cifrado de campos en DynamoDB"]
+    KAS["CMK tenant-A-secrets&lt;br/&gt;Secrets Manager"]
+    KAB["CMK tenant-A-biometric&lt;br/&gt;solo fase 2"]
+  end
+  subgraph TBN["Tenant B"]
+    KBD["CMK tenant-B-data"]
+    KBF["Claves de datos del tenant B"]
+    KBS["CMK tenant-B-secrets"]
+  end
+  DDB["C-24 DynamoDB&lt;br/&gt;cifrado de tabla con llave de servicio"]
+  S3A["C-25 S3 prefijo tenant A"]
+  S3B["C-25 S3 prefijo tenant B"]
+  SECA["C-11 secretos tenant A"]
+  AUD["Bitacora de auditoria&lt;br/&gt;Object Lock, seudonimizada"]
+  KAD --&gt; S3A
+  KAF --&gt;|"envelope encryption"| DDB
+  KAS --&gt; SECA
+  KBD --&gt; S3B
+  KBF --&gt;|"envelope encryption"| DDB
+  KSIGN --&gt; AUD
+  KLOG --&gt; AUD
+  OFF["Offboarding del tenant&lt;br/&gt;exportar, borrar, programar eliminacion de llaves"] -.-&gt;|"criptoborrado"| KAD
+  OFF -.-&gt; KAF
+  OFF -.-&gt; KAS
+</pre></div>
+      <p class="dg-note">DynamoDB cifra por tabla, así que los campos personales usan cifrado de sobre con claves de datos de cada tenant. La bitácora de auditoría está firmada y es inmutable.</p>
+    </figure>
+  </div>
+</section>
+
+<!-- CALIDAD -->
+<section class="sec" id="calidad">
+  <div class="sec-head">
+    <div class="eyebrow">Cómo se mide</div>
+    <h2>Observabilidad, evals y revisión humana</h2>
+    <div class="src">Fuente: WP07 Observabilidad y evals</div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Decisiones de calidad</h3>
+      <ul class="list">
+        <li><b>Juez propio con Haiku 5.5 dentro de la celda,</b> en lugar de los evaluadores incluidos de AgentCore. Es unas 25 veces más barato y respeta la residencia de datos: desde el 14 dic 2026 AWS puede procesar esas solicitudes en cualquier región.</li>
+        <li><b>El 100% de las conversaciones de cobranza</b> pasa por un juez de cumplimiento; en calidad general se muestrea el 10%.</li>
+        <li><b>17 criterios numéricos</b> para promover una versión. El canario dura hasta 100 conversaciones y 24 h, con rollback automático.</li>
+        <li><b>Los KPIs salen de eventos sin texto,</b> no de trazas, que se borran a los 30 días.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Costo de la calidad</h3>
+      <dl class="kv">
+        <dt>Piloto</dt><dd>USD 6.5 mil al mes · 1.0 persona de QA</dd>
+        <dt>Lanzamiento</dt><dd>USD 15 mil al mes · 2.5 personas de QA</dd>
+        <dt>Escala</dt><dd>USD 42 mil al mes · 7.6 personas de QA</dd>
+      </dl>
+      <p class="muted" style="font-size:13.5px">En el piloto, la calidad cuesta 5.4 veces lo que el LLM de las conversaciones. La revisión humana se estratifica por riesgo: revisar el 100% de las alertas exigiría unas 20 personas en escala.</p>
+      <div class="callout warn"><h3>Grupo de control de cobranza: 20%</h3><p class="muted">Con 10% de control, el piloto solo detecta mejoras de recuperación de +15% o más. El Gate 2 fija 20% de control con al menos 8 semanas de cuentas nuevas, con lectura formal hacia la semana 14 de cobranza. Desde lanzamiento puede bajar a 10%. No se cobra comisión sobre la mejora del piloto.</p></div>
+    </div>
+  </div>
+  <div class="stack mt">
+    <figure class="dg">
+      <figcaption><b>Evaluación en línea y revisión humana</b><span>WP07 §2.7.3</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+flowchart TB
+  CONV["Conversacion en produccion&lt;br/&gt;AG-ATC, AG-COB, AG-CON"] --&gt; DET["Chequeos deterministas en linea&lt;br/&gt;V-01 a V-10, C-13, 100 por ciento"]
+  DET --&gt; SMP{"Muestreador&lt;br/&gt;reglas 2.7.1 y 2.7.2"}
+  SMP --&gt;|"100 por ciento cumplimiento COB&lt;br/&gt;10 por ciento calidad&lt;br/&gt;20 por ciento pt-BR y nuevas operaciones"| JDG["Juez en celda&lt;br/&gt;harness propio, Haiku 5.5&lt;br/&gt;misma ruta que C-15"]
+  SMP --&gt;|"banderas A y B, aleatorio, limitacion"| Q["Cola de QA humana&lt;br/&gt;Sora Console, vista tokenizada"]
+  JDG --&gt; EVS["EVT-W07-01&lt;br/&gt;puntajes y razones"]
+  EVS --&gt; TRI{"Triaje&lt;br/&gt;fallo critico o baja confianza"}
+  TRI --&gt;|"si"| Q
+  TRI --&gt;|"no"| LAKE["Lago C-26&lt;br/&gt;ev_quality"]
+  Q --&gt; REV["Revision humana&lt;br/&gt;30 por ciento a ciegas"]
+  REV --&gt; LBL["EVT-W07-02&lt;br/&gt;etiqueta y modos de falla"]
+  LBL --&gt; LAKE
+  LBL --&gt;|"critical"| INC["Incidente AI-n&lt;br/&gt;y caso nuevo en eval set"]
+  LAKE --&gt; CAL["Calibracion semanal&lt;br/&gt;acuerdo juez-humano MET-13"]
+  CAL --&gt;|"kappa menor a 0.60"| ADJ["Ajustar rubrica o juez&lt;br/&gt;recalibrar"]
+  ADJ --&gt; JDG
+  LAKE --&gt; DSH["DSH-02 y alertas ALR-16&lt;br/&gt;entrada al ciclo 2.11"]
+  HF["Persona que recibe el handoff&lt;br/&gt;2 toques de feedback"] --&gt; LBL
+  CSAT["CSAT, quejas, reaperturas&lt;br/&gt;EVT-23, EVT-21, EVT-05"] --&gt; DSH
+</pre></div>
+      <p class="dg-note">Chequeos deterministas al 100%, juez por muestreo, cola de revisión humana y calibración semanal entre el juez y las personas.</p>
+    </figure>
+  </div>
+</section>
+
+<!-- REQUISITOS Y PLAN -->
+<section class="sec" id="plan">
+  <div class="sec-head">
+    <div class="eyebrow">Qué hace falta</div>
+    <h2>Requisitos y plan preliminar</h2>
+    <div class="src">Fuentes: WP10 Requisitos hacia el cliente · WP11 Requisitos internos. El plan definitivo sale de WP12.</div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Lo que se le pide al cliente</h3>
+      <p><b>83 requisitos.</b> 68 bloquean el go-live: 57 siempre y 11 según el caso.</p>
+      <ul class="list">
+        <li>La ruta crítica no es técnica. La marcan la verificación del negocio en Meta, los códigos cortos de SMS (Brasil 4 semanas, Chile 16) y las opiniones legales.</li>
+        <li>Hace falta una <b>fase 0 antes de la firma</b>, con carta de intención: el tenant inicia la verificación en Meta y el código corto de SMS, y se preparan el contrato, el DPA y la opinión legal del país.</li>
+        <li>Promesa comercial: go-live en 4 semanas o menos desde la firma si la fase 0 está cerrada. Con el primer cliente son 6 semanas, y 2 semanas solo con un tenant ya verificado.</li>
+        <li>El tenant es dueño de su WABA y su número, y además debe registrar su propio método de pago en Meta.</li>
+        <li>Para el piloto se busca un cliente BNPL de cuotas en México, con helpdesk, pasarela de pagos y core con API.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Lo que necesita Sora</h3>
+      <p><b>72 requisitos internos.</b> 44 bloquean el build o el piloto.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Etapa</th><th class="num">Personas</th><th class="num">USD/mes</th></tr></thead>
+          <tbody>
+            <tr><td>Construcción</td><td class="num">12</td><td class="num">74 mil</td></tr>
+            <tr><td>Piloto</td><td class="num">14</td><td class="num">80 mil</td></tr>
+            <tr><td>Lanzamiento</td><td class="num">23</td><td class="num">130 mil</td></tr>
+            <tr><td>Escala</td><td class="num">36</td><td class="num">205.5 mil</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="list">
+        <li>Soporte de AWS: Business Support+ durante la construcción y Enterprise desde lanzamiento. Los planes anteriores desaparecen el 1 ene 2027.</li>
+        <li>Facturación híbrida: en USD desde la entidad actual. Se abre entidad local en Brasil antes del primer contrato y en México en lanzamiento.</li>
+        <li>La nube durante las 16 semanas de construcción cuesta unos USD 16 mil.</li>
+        <li>Para Sora, la verificación en Meta más la aprobación como Tech Provider toman 5 semanas en el caso típico y hasta 12 en el peor, contadas desde la semana 1.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="stack mt">
+    <figure class="dg">
+      <figcaption><b>Ruta crítica de prerequisitos externos</b><span>WP11 §2.4.3 · fechas ilustrativas</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+gantt
+  title Ruta critica de prerequisitos externos con kickoff ilustrativo 2026-12-07
+  dateFormat YYYY-MM-DD
+  section Meta
+  Consulta escrita a Meta sobre cobranza   :m1, 2026-12-07, 5d
+  Verificacion del negocio de Sora P50     :m2, 2026-12-07, 14d
+  Colchon P90 de la verificacion           :m3, after m2, 28d
+  App de Meta y Tech Provider WhatsApp     :m4, after m2, 21d
+  App Review Graph API Instagram y Facebook :m5, after m2, 21d
+  Verificacion del negocio del tenant      :m6, 2027-03-01, 28d
+  section Telefonia y SMS
+  Codigo corto SMS Brasil 4 semanas        :t1, 2026-12-07, 28d
+  Codigo corto SMS Chile 16 semanas        :t2, 2026-12-07, 112d
+  section AWS
+  Organizacion Control Tower y cuotas Q01 a Q03 :a1, 2026-12-07, 5d
+  Spikes S0 a S10                          :a2, 2026-12-07, 42d
+  Pentest externo                          :a3, 2027-03-01, 21d
+  section Hitos
+  Go-live del piloto semana 16             :milestone, g1, 2027-03-29, 0d
+</pre></div>
+      <p class="dg-note">La consulta a Meta y la verificación del negocio de Sora arrancan la semana 1. El código corto de Chile dura tanto como todo el camino al piloto.</p>
+    </figure>
+    <figure class="dg">
+      <figcaption><b>Onboarding de un agente de atención en lanzamiento</b><span>WP10 §2.5.1 · fechas ilustrativas</span></figcaption>
+      <div class="dg-box"><pre class="mermaid">
+gantt
+  title Onboarding de un agente AG-ATC - ESC-L (fechas ilustrativas)
+  dateFormat YYYY-MM-DD
+  axisFormat %d-%b
+  section Fase 0 Readiness
+  One-pager y cuestionario            :f0a, 2026-12-14, 2026-12-18
+  Verificacion del negocio en Meta    :crit, f0b, 2026-12-14, 2027-01-08
+  Contrato DPA y acta                 :f0c, 2026-12-14, 2027-01-08
+  Opinion legal del pais              :f0d, 2026-12-21, 2027-01-08
+  Firma del contrato                  :milestone, m1, 2027-01-08, 0d
+  section Fase 1 Descubrimiento
+  Kickoff y descubrimiento            :f1a, 2027-01-11, 2027-01-15
+  Aprovisionamiento W-07 y sandbox    :f1b, 2027-01-12, 2027-01-15
+  section Fase 2 Configuracion e integracion
+  Registro integrado y numero         :f2a, 2027-01-12, 2027-01-20
+  Integracion CMI en sandbox          :crit, f2b, 2027-01-13, 2027-01-22
+  Plantillas a Meta                   :f2c, 2027-01-18, 2027-01-22
+  Conformidad del CMI                 :crit, f2d, 2027-01-22, 2027-01-25
+  section Fase 3 Contenido
+  KB politicas y textos aprobados     :f3a, 2027-01-18, 2027-01-22
+  section Fase 4 Evals
+  Evals con datos del cliente         :f4a, 2027-01-22, 2027-01-26
+  section Fase 5 UAT
+  UAT y acta                          :crit, f5a, 2027-01-26, 2027-01-29
+  section Fase 6 Go-live
+  Modo sombra                         :f6a, 2027-02-01, 2027-02-03
+  Go no-go                            :milestone, m2, 2027-02-03, 0d
+  Primera conversacion en produccion  :milestone, m3, 2027-02-04, 0d
+  section Fase 7 y 8 Ampliacion y hypercare
+  Trafico al 10 por ciento            :f7a, 2027-02-04, 2027-02-10
+  Trafico al 25 por ciento            :f7b, 2027-02-11, 2027-02-17
+  Trafico al 50 por ciento            :f7c, 2027-02-18, 2027-02-24
+  Trafico al 100 por ciento           :f7d, 2027-02-25, 2027-03-03
+  Hypercare de 4 semanas              :f8a, 2027-02-04, 2027-03-03
+</pre></div>
+      <p class="dg-note">La fase 0 corre antes de la firma. Después: integración en sandbox, contenido, evals, UAT, modo sombra y ampliación gradual del tráfico de 10% a 100%.</p>
+    </figure>
+  </div>
+</section>
+
+<!-- DECISIONES -->
+<section class="sec" id="decisiones">
+  <div class="sec-head">
+    <div class="eyebrow">Qué se pide al liderazgo</div>
+    <h2>Decisiones pendientes</h2>
+    <div class="src">Fuentes: Gate 1 §6.1 (B1–B8) y Gate 2 §6.1 (B9–B13). Mientras nadie responda, el diseño avanza con la respuesta por defecto, marcada "no confirmada".</div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>Pregunta</th><th>Respuesta por defecto</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">B1</td><td>¿Cómo se aborda la política de Meta sobre cobranza?</td><td>Mora fuera de WhatsApp (escenario B), consulta escrita a Meta en la semana 1, cliente BNPL de cuotas y no de adelantos de nómina.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B2</td><td>¿Datos guardados en Brasil e inferencia en EE. UU. con datos tokenizados?</td><td>Sí para el piloto en México, condicionado a la opinión legal.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B3</td><td>¿Puede salir de LatAm información personal hacia el perfil global o hacia Guardrails en otra región?</td><td>No. El audio sale solo en la fase 1.5 y con aprobación legal.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B4</td><td>¿País y cliente piloto?</td><td>México, con un cliente BNPL de cuotas que tenga helpdesk, pasarela de pagos y core con API.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B5</td><td>¿Se aprueban las definiciones de conversación y de resolución autónoma?</td><td>Sí. La cobranza no se factura por resolución.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B6</td><td>¿Objetivos de recuperación y tiempos de atención humana?</td><td>Hasta 15 min de datos perdidos; 4 h por componente, 24 h si cae la celda. Traspasos de 5 min a 4 h según prioridad, en el horario del tenant.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B7</td><td>¿Dónde corre Sora Core?</td><td>En una cuenta AWS de Sora, conectada por PrivateLink, o por mTLS con IP fija.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B8</td><td>¿Sora cuenta como despacho de cobranza?</td><td>Se asume que no. No se cobra comisión sobre lo recuperado hasta tener opinión legal.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B9</td><td>¿La meta de margen (65% / 75%) es bruta de plataforma o incluye personas?</td><td>Bruta de plataforma. La contribución con personas se reporta aparte, con meta de 0% o más en lanzamiento.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B10</td><td>¿Cobranza por contacto y por minuto, sin porcentaje de lo recuperado, y contenido por pieza?</td><td>Sí. Piso de USD 0.34 por contacto en el escenario B y 0.69 por pieza de contenido.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B11</td><td>¿El onboarding de 4 semanas desde la firma solo aplica con la fase 0 cerrada?</td><td>Sí. 6 semanas con el primer cliente y 2 solo con tenant ya verificado. El código corto de Chile se pide en la fase 0.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B12</td><td>¿Se aprueba el equipo de 12 personas (USD 74 mil al mes) y las 16 semanas corren desde el kickoff?</td><td>Sí. El reclutamiento de 4 a 8 semanas va antes, así que el calendario total es de 20 a 24 semanas.</td><td><span class="chip run">No confirmada</span></td></tr>
+        <tr><td class="mono">B13</td><td>¿Qué entidad legal firma, quién es el DPO y qué retenciones aplican por país?</td><td>La entidad actual factura en USD desde el exterior. Un responsable fraccional es DPO hasta lanzamiento. Opinión fiscal de México y cláusula de gross-up antes del piloto.</td><td><span class="chip run">No confirmada</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RIESGOS -->
+<section class="sec" id="riesgos">
+  <div class="sec-head">
+    <div class="eyebrow">Qué puede salir mal</div>
+    <h2>Riesgos y tensiones abiertas</h2>
+    <div class="src">Consolidado de los entregables y del Gate 1. El top 10 definitivo sale del documento maestro.</div>
+  </div>
+  <div class="grid2">
+    <div class="callout risk"><span class="chip risk">Alto</span><h3>WhatsApp no sirve para cobrar la mora</h3><p class="muted">Cambia la promesa de la landing, duplica el costo del canal de cobranza y deja la mora casi sin conversación en el piloto.</p></div>
+    <div class="callout risk"><span class="chip risk">Alto</span><h3>Precio de cobranza y contenido</h3><p class="muted">Sin precio para cobranza y contenido, la contribución en lanzamiento es negativa. A sus pisos es ≈30%. Perú, Chile y Argentina exigen un precio por resolución más alto o pasar el costo del canal al cliente. El modelo comercial (WP09) tiene que resolverlo.</p></div>
+    <div class="callout risk"><span class="chip risk">Alto</span><h3>Inferencia fuera de LatAm</h3><p class="muted">Cada prompt es una transferencia internacional. Sin la opinión legal LQ-07 no hay piloto.</p></div>
+    <div class="callout warn"><span class="chip run">Medio</span><h3>78 Must en 16 semanas</h3><p class="muted">El alcance es alto para el calendario. Si hay que recortar, primero salen los Should, nunca los 20 escenarios de aceptación.</p></div>
+    <div class="callout warn"><span class="chip run">Medio</span><h3>Plazos que Sora no controla</h3><p class="muted">Verificación en Meta de 2 a 6 semanas, código corto de SMS de 16 semanas en Chile, App Review de Meta, pentest externo.</p></div>
+    <div class="callout warn"><span class="chip run">Medio</span><h3>Competencia con capital</h3><p class="muted">Wonderful ya cobra con IA en Colombia y México. La diferencia de Sora depende de Sora Core y de demostrar el impacto contra un grupo de control.</p></div>
+  </div>
+</section>
+
+<!-- ANEXOS -->
+<section class="sec" id="anexos">
+  <div class="sec-head">
+    <div class="eyebrow">Anexo técnico</div>
+    <h2>Entregables del expediente</h2>
+    <div class="src">Carpeta <code>sora-agents-platform/03-entregables/</code>. Los enlaces abren el archivo cuando esta página se ve en local.</div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Entregable</th><th>Contenido</th><th>Estado</th></tr></thead>
+      <tbody>
+        <tr><td><a data-local href="../03-entregables/WP01-benchmark-mercado.md">WP01 Benchmark</a></td><td>31 jugadores, scorecard por país, posicionamiento y referencias de precio</td><td><span class="chip ok">Parchado</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP02-producto-prd.md">WP02 PRD</a></td><td>Personas, journeys, 110 ítems, 112 RF, 36 RNF, RBAC, KPIs y eventos</td><td><span class="chip ok">v1.1</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP03-arquitectura-aws.md">WP03 Arquitectura AWS</a></td><td>32 componentes, cuentas, celdas, red, datos, capacidad, cuotas y DR</td><td><span class="chip ok">v1.1</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP04-agentes-y-workflows.md">WP04 Agentes y workflows</a></td><td>4 agentes, 32 herramientas, 20 reglas, W-01 a W-08 y configuración YAML</td><td><span class="chip ok">Parchado</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP05-canales-e-integraciones.md">WP05 Canales e integraciones</a></td><td>WhatsApp, SMS, voz, plantillas, contrato de integración de 20 endpoints</td><td><span class="chip ok">Parchado</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP06-seguridad-y-cumplimiento.md">WP06 Seguridad y cumplimiento</a></td><td>Clasificación de datos, matriz de 6 países, STRIDE, 26 preguntas legales</td><td><span class="chip ok">Parchado</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/_GATE-1.md">Gate 1</a></td><td>Estado por WP, valores canónicos, supuestos S-G1 y preguntas B1–B8</td><td><span class="chip ok">Amarillo</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP07-observabilidad-y-evals.md">WP07 Observabilidad y evals</a></td><td>Trazas, KPIs, evals, juez, QA humana, gates de promoción y holdout</td><td><span class="chip run">Parche en curso</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP08-costos-y-unit-economics.md">WP08 Costos</a> · <a data-local href="../03-entregables/WP08-modelo-costos.csv">CSV</a></td><td>Costos por escenario, país y unidad; sensibilidades y márgenes; 1,615 filas</td><td><span class="chip run">Parche en curso</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP10-requisitos-cliente.md">WP10 Requisitos del cliente</a></td><td>83 requisitos, onboarding por fases, contrato y checklist de go-live</td><td><span class="chip run">Parche en curso</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/WP11-requisitos-internos.md">WP11 Requisitos internos</a></td><td>72 requisitos, equipo, cuentas, soporte, facturación y runbooks</td><td><span class="chip run">Parche en curso</span></td></tr>
+        <tr><td><a data-local href="../03-entregables/_GATE-2.md">Gate 2</a></td><td>Precios canónicos verificados, márgenes, pisos de precio, onboarding y preguntas B9–B13</td><td><span class="chip ok">Amarillo</span></td></tr>
+        <tr><td>WP09 Modelo comercial · WP12 Plan del MVP</td><td>Precio, margen, ROI del cliente, roadmap, equipo y presupuesto</td><td><span class="chip todo">Pendiente</span></td></tr>
+        <tr><td>Gate 3 · Documento maestro</td><td>Revisión final e integración para decidir la construcción</td><td><span class="chip todo">Pendiente</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Sora Valley · Sora Agents Platform · Versión de avance al 17 nov 2026.</p>
+    <p>Costos en USD. Precios verificados en fuentes oficiales al 16 nov 2026 salvo indicación. Los diagramas se copiaron sin cambios de los entregables. Todo punto regulatorio está sujeto a validación legal.</p>
+  </div>
+</footer>
+
+<div id="tip" role="tooltip" hidden></div>
+
+<script>
+(function(){
+  var isFile = location.protocol === 'file:';
+
+  // Enlaces a los entregables: solo funcionan en local.
+  document.querySelectorAll('a[data-local]').forEach(function(a){
+    if (isFile) return;
+    var c = document.createElement('span');
+    c.textContent = a.textContent;
+    c.title = a.getAttribute('href').replace('../', 'sora-agents-platform/');
+    a.replaceWith(c);
+  });
+
+  // En local no hay render nativo de Mermaid: se carga la librería.
+  if (isFile) {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js';
+    s.onload = function(){
+      var root = document.documentElement;
+      var forced = root.getAttribute('data-theme');
+      var light = forced ? forced === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+      window.mermaid.initialize({ startOnLoad:false, theme: light ? 'default' : 'dark', securityLevel:'strict', flowchart:{ htmlLabels:true } });
+      window.mermaid.run({ querySelector:'pre.mermaid', suppressErrors:true });
+    };
+    document.head.appendChild(s);
+  }
+
+  // Tooltip de los gráficos.
+  var tip = document.getElementById('tip');
+  function place(x, y){
+    var w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = Math.max(8, Math.min(x + 14, window.innerWidth - w - 8)) + 'px';
+    tip.style.top = Math.max(8, Math.min(y + 14, window.innerHeight - h - 8)) + 'px';
+  }
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', el.getAttribute('data-tip'));
+    el.addEventListener('pointerenter', function(e){ tip.textContent = el.getAttribute('data-tip'); tip.hidden = false; place(e.clientX, e.clientY); });
+    el.addEventListener('pointermove', function(e){ place(e.clientX, e.clientY); });
+    el.addEventListener('pointerleave', function(){ tip.hidden = true; });
+    el.addEventListener('focus', function(){ var r = el.getBoundingClientRect(); tip.textContent = el.getAttribute('data-tip'); tip.hidden = false; place(r.left, r.bottom); });
+    el.addEventListener('blur', function(){ tip.hidden = true; });
+  });
+})();
+</script>

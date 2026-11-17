@@ -1,0 +1,1556 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Sora Valley</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap">
+<style>
+html{scroll-behavior:smooth}
+body{margin:0;background:#0A0D10}
+.sv-root{--bg:#0A0D10;--s1:#10151A;--s2:#161C22;--line:#232C34;--tx:#EEF2F4;--mu:#9BA7B0;background:var(--bg);color:var(--tx);font-family:'Inter',system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+.sv-root *{box-sizing:border-box}
+.sv-root h1,.sv-root h2,.sv-root h3,.sv-root p{margin:0}
+.sv-root a{color:inherit;text-decoration:none}
+.sv-root section{scroll-margin-top:72px}
+.hd{font-family:'Space Grotesk','Inter',system-ui,sans-serif;letter-spacing:-0.025em}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.sec{padding:112px 0}
+.eyebrow{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:16px}
+.h2{font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-size:clamp(30px,4.2vw,48px);line-height:1.08;font-weight:600;letter-spacing:-.025em;max-width:20ch;text-wrap:balance}
+.lead{color:var(--mu);font-size:18px;max-width:50ch;text-wrap:pretty}
+.ic{display:block}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:rgba(10,13,16,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(35,44,52,.7)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;letter-spacing:-.01em}
+.nav-links{display:flex;gap:32px;font-size:14px;color:var(--mu)}
+.nav-links a{transition:color .2s}
+.nav-links a:hover{color:var(--tx)}
+
+/* buttons */
+.sv-root a.btn,.sv-root button.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border-radius:999px;background:var(--accent);color:#04130F;font-family:'Inter',sans-serif;font-weight:600;font-size:15px;border:0;cursor:pointer;transition:transform .25s,box-shadow .25s}
+.sv-root a.btn:hover,.sv-root button.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px -10px var(--accent)}
+.btn svg{transition:transform .25s}
+.btn:hover svg{transform:translateX(3px)}
+.sv-root a.btn-sm{min-height:44px;padding:0 18px;font-size:14px}
+.sv-root a.ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:1px solid var(--line);color:var(--tx);font-weight:500;font-size:15px;transition:border-color .25s,background .25s}
+.sv-root a.ghost:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;min-height:760px;display:flex;align-items:center}
+.hero .wrap{position:relative;z-index:2;width:100%}
+.net-svg{position:absolute;inset:0;width:100%;height:100%}
+.glow{position:absolute;right:-8%;top:-15%;width:62%;height:100%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 17%,transparent),transparent)}
+.hero-fade{position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 0%,rgba(10,13,16,.82) 38%,rgba(10,13,16,0) 78%),linear-gradient(180deg,rgba(10,13,16,0) 72%,var(--bg) 100%)}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(16,21,26,.7);font-size:14px;color:var(--mu)}
+.pill b{color:var(--tx);font-weight:600;font-family:'Space Grotesk',sans-serif;font-size:15px}
+.pill i{width:1px;height:14px;background:var(--line)}
+.h1{font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-size:clamp(40px,6.2vw,80px);line-height:1.02;font-weight:600;letter-spacing:-.035em;max-width:15ch;text-wrap:balance}
+.h1 span{color:var(--mu)}
+.edge{stroke:var(--accent);stroke-opacity:.26;stroke-width:1;stroke-dasharray:3 9;animation:flow 3.2s linear infinite}
+.nd{fill:var(--accent);animation:pulse 4.5s ease-in-out infinite}
+.ring{fill:none;stroke:var(--accent);stroke-opacity:.3;stroke-width:1}
+.net{animation:drift 16s ease-in-out infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.h-in{animation:up .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0s)}
+
+/* reveal on scroll (only active once the script marks the page) */
+.rv-on [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv-on [data-reveal].in{opacity:1;transform:none}
+
+/* problem */
+.probs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:40px;margin-top:64px}
+.pt{border-top:1px solid var(--line);padding-top:28px;display:flex;flex-direction:column;gap:14px}
+.pt .n{font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--mu)}
+.pt .ic-wrap{color:var(--accent);margin:8px 0 6px}
+.pt h3{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.pt p{color:var(--mu);font-size:16px;max-width:34ch}
+
+/* cards */
+.cw{display:flex}
+.cw>.card{flex:1}
+.card{position:relative;padding:24px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--s2),var(--s1));overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(340px circle at 0% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 62%);opacity:0;transition:opacity .4s;pointer-events:none}
+.card>*{position:relative}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:0 18px 40px -24px color-mix(in srgb,var(--accent) 40%,transparent)}
+.card:hover::before{opacity:1}
+.ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);transition:transform .35s cubic-bezier(.2,.7,.2,1),background .3s}
+.card:hover .ico{transform:scale(1.1) rotate(-5deg);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.015em;margin:20px 0 8px;line-height:1.2}
+.card p{color:var(--mu);font-size:15px}
+
+/* product groups */
+.grp{display:flex;flex-wrap:wrap;gap:28px 56px;padding:44px 0;border-top:1px solid var(--line)}
+.grp-h{flex:0 0 200px}
+.grp-h h3{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600;letter-spacing:-.02em}
+.grp-h p{color:var(--mu);font-size:15px;margin-top:8px;max-width:22ch}
+.grid2{flex:1 1 520px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px}
+
+/* flow */
+.flow{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin-top:72px}
+.fl{position:absolute;top:27px;left:calc(12.5% - 9px);right:calc(12.5% - 9px);height:2px;background:var(--line)}
+.fl i{position:absolute;inset:0;background:var(--accent)}
+.fl b{position:absolute;top:-3px;left:0;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent);opacity:0}
+.step{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.node{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--s1);border:1px solid var(--accent);color:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 10%,transparent);transition:border-color .6s,color .6s,box-shadow .6s;transition-delay:var(--d,0s)}
+.step h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.015em;line-height:1.2}
+.step p{color:var(--mu);font-size:15px;margin-top:8px;max-width:24ch}
+.step .k{font-size:12px;letter-spacing:.1em;color:var(--mu);margin-bottom:6px;font-weight:500}
+.rv-on .flow .fl i{transform:scaleX(0);transform-origin:left;transition:transform 2.2s cubic-bezier(.6,0,.2,1) .2s}
+.rv-on .flow.in .fl i{transform:scaleX(1)}
+.rv-on .flow .node{border-color:var(--line);color:var(--mu);box-shadow:none}
+.rv-on .flow.in .node{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 10%,transparent)}
+.rv-on .flow.in .fl b{animation:travel 4.5s ease-in-out 2.6s infinite}
+@keyframes travel{0%{left:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:calc(100% - 8px);opacity:0}}
+
+/* why */
+.why{display:flex;flex-wrap:wrap;gap:48px 80px;align-items:flex-start}
+.why-l{flex:1 1 380px}
+.why-r{flex:1 1 420px;display:flex;flex-direction:column}
+.wr{display:flex;gap:20px;padding:28px 0;border-top:1px solid var(--line)}
+.wr:last-child{border-bottom:1px solid var(--line)}
+.wr h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.015em;margin-bottom:6px}
+.wr p{color:var(--mu);font-size:15px}
+.wr .ico{flex:0 0 44px;transition:transform .35s,background .3s}
+.wr:hover .ico{transform:scale(1.1) rotate(-5deg);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+
+/* plans */
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px;margin-top:56px}
+.plan{display:flex;flex-direction:column;padding:32px 28px}
+.plan .pn{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.plan .price{font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:600;letter-spacing:-.03em;margin:16px 0 8px;line-height:1.1}
+.plan .pd{color:var(--mu);font-size:15px}
+.plan ul{list-style:none;margin:28px 0 32px;padding:24px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:14px}
+.plan li{display:flex;gap:12px;font-size:15px;align-items:flex-start}
+.plan li svg{flex:0 0 18px;margin-top:2px;color:var(--accent)}
+.plan .ghost{margin-top:auto}
+
+/* cta */
+.cta{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,var(--s2),var(--s1));padding:64px}
+.cta .glow2{position:absolute;left:-10%;bottom:-40%;width:60%;height:100%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 14%,transparent),transparent);pointer-events:none}
+.cta-in{position:relative;display:flex;flex-wrap:wrap;gap:48px 64px;align-items:center}
+.cta-l{flex:1 1 380px}
+.cta-r{flex:1 1 360px}
+.fld{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.fld label{font-size:14px;color:var(--mu);font-weight:500}
+.fld input{height:52px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:16px;transition:border-color .2s,box-shadow .2s}
+.fld input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
+.sent{display:flex;gap:16px;align-items:flex-start;padding:24px;border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:16px;background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.sent h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;margin-bottom:4px}
+.sent p{color:var(--mu);font-size:15px}
+.foot{border-top:1px solid var(--line);padding:32px 0 48px;color:var(--mu);font-size:14px}
+.foot-in{display:flex;flex-wrap:wrap;gap:16px 32px;justify-content:space-between;align-items:center}
+
+/* sora core */
+.core-wrap{display:flex;flex-wrap:wrap;gap:48px 64px;align-items:center}
+.core-l{flex:1 1 380px}
+.core-r{flex:1 1 520px;min-width:0}
+.core-svg{width:100%;height:auto;display:block;overflow:visible}
+.cs-edge{stroke:var(--line);stroke-width:1.2}
+.cs-edge2{fill:none;stroke:var(--accent);stroke-opacity:.45;stroke-width:1.4;stroke-dasharray:4 7;animation:flow 3s linear infinite}
+.cs-node{fill:#10151A;stroke:var(--accent);stroke-opacity:.3;stroke-width:1.2;animation:ig 8.4s ease-in-out infinite}
+.cs-lbl{fill:var(--mu);font-size:13px;font-family:'Inter',sans-serif;text-anchor:middle}
+.cs-core{fill:#10151A;stroke:var(--accent);stroke-width:1.5}
+.cs-core-t{fill:var(--tx);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;text-anchor:middle}
+.cs-halo{fill:none;stroke:var(--accent);stroke-opacity:.5;transform-box:fill-box;transform-origin:center;animation:halo 4s ease-out infinite}
+.sg{fill:var(--accent);opacity:0;animation:sg 4.2s linear infinite}
+.sg2{fill:#fff;animation-duration:5s;filter:drop-shadow(0 0 6px var(--accent))}
+.loops{list-style:none;margin:28px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.loops li{display:flex;gap:12px;align-items:center;font-size:15px}
+.loops li svg{color:var(--accent);flex:0 0 18px}
+@keyframes ig{0%,22%,100%{stroke-opacity:.3;fill:#10151A}4%,16%{stroke-opacity:1;fill:color-mix(in srgb,var(--accent) 22%,#10151A)}}
+@keyframes halo{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+@keyframes sg{0%{offset-distance:0%;opacity:0}12%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+
+/* catalog card extras */
+.ptag{display:block;margin-top:20px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:500}
+.go{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:13px;color:var(--mu);transition:color .25s,gap .25s}
+.card:hover .go{color:var(--accent);gap:10px}
+.card>.hit{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:16px}
+.hit:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* product overlay */
+.pv{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;visibility:hidden;pointer-events:none}
+.pv.open{visibility:visible;pointer-events:auto}
+.pv-top{position:sticky;top:0;z-index:5;background:rgba(10,13,16,.84);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:10px 0 12px}
+.pv-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.sv-root button.pbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:border-color .2s,background .2s}
+.sv-root button.pbtn:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.pn-nav{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:13px}
+.stages{list-style:none;margin:0;padding:4px 6px;display:flex;gap:18px;overflow-x:auto;scrollbar-width:none}
+.stg{display:flex;align-items:center;justify-content:center;flex:1 0 auto;min-height:36px;padding:0 16px;border-radius:999px;border:1px solid var(--line);color:var(--mu);font-size:13px;font-weight:500;position:relative;transition:color .5s,background .5s,box-shadow .5s,border-color .5s}
+.stg+.stg::before{content:"\2192";position:absolute;left:-15px;top:50%;transform:translateY(-50%);color:#566470;font-size:11px}
+.stg.on{color:#04130F;background:var(--accent);border-color:var(--accent);box-shadow:0 0 22px -4px var(--accent)}
+.pv-body{transition:opacity .22s,transform .22s}
+.pv-body.swap{opacity:0;transform:translateY(10px)}
+.ph{position:relative;overflow:hidden;padding:64px 0 80px}
+.glow3{position:absolute;right:-10%;top:-30%;width:60%;height:140%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 14%,transparent),transparent);pointer-events:none}
+.ph-in{position:relative;display:flex;flex-wrap:wrap;gap:40px 56px;align-items:center}
+.ph-l{flex:1 1 380px}
+.ph-r{flex:1 1 440px;display:flex;justify-content:center}
+.ph-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(44px,7vw,88px);line-height:1;font-weight:600;letter-spacing:-.04em;margin:0 0 20px}
+.ph-p{font-size:clamp(18px,2.2vw,24px);color:var(--mu);max-width:26ch;line-height:1.3;margin-bottom:32px;text-wrap:balance}
+.pv.open .ph-l>*{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.pv.open .ph-l>*:nth-child(2){animation-delay:.1s}
+.pv.open .ph-l>*:nth-child(3){animation-delay:.2s}
+.pv.open .ph-l>*:nth-child(4){animation-delay:.3s}
+.stage{position:relative;width:100%;max-width:520px;aspect-ratio:5/4;border:1px solid var(--line);border-radius:22px;background:radial-gradient(70% 70% at 50% 40%,color-mix(in srgb,var(--accent) 9%,#10151A),#10151A);overflow:hidden}
+.stage svg.sc{position:absolute;inset:0;width:100%;height:100%}
+.pv-sec{padding:88px 0;border-top:1px solid var(--line);scroll-margin-top:110px}
+.stmt{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,4vw,44px);line-height:1.12;letter-spacing:-.025em;font-weight:600;max-width:24ch;text-wrap:balance}
+.rv-on [data-rv2]{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv-on [data-rv2].in{opacity:1;transform:none}
+.flow>.step:nth-child(2) .node{--d:.3s}
+.flow>.step:nth-child(3) .node{--d:.9s}
+.flow>.step:nth-child(4) .node{--d:1.5s}
+.flow>.step:nth-child(5) .node{--d:2.1s}
+.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:14px;margin-top:40px}
+.card.mini{padding:20px}
+.card.mini h3{font-size:17px;margin:16px 0 6px}
+.mets{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.met{padding:12px 18px;border:1px solid var(--line);border-radius:999px;background:var(--s1);font-size:15px;transition:border-color .25s,transform .25s}
+.met:hover{border-color:var(--accent);transform:translateY(-2px)}
+.codes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:16px;margin-top:40px}
+.code{border:1px solid var(--line);border-radius:16px;background:#0D1115;overflow:hidden;min-width:0}
+.code-h{display:flex;justify-content:space-between;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line);font-size:13px;color:var(--mu)}
+.code pre{margin:0;padding:18px;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.65;color:#CFE9E2}
+.demo{margin-top:32px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,var(--s2),var(--s1));padding:32px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;border:1px dashed color-mix(in srgb,var(--accent) 55%,var(--line));color:var(--accent);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.sv-root input[type=range]{width:100%;height:32px;accent-color:var(--accent);cursor:pointer}
+.hide-sm{display:inline}
+/* hero scenes + demos */
+.t-s{fill:var(--tx);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:30px;text-anchor:middle}
+.t-m{fill:var(--mu);font-family:'Inter',sans-serif;font-size:13px;text-anchor:middle}
+.t-a{fill:var(--accent);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-anchor:middle}
+.h0g{opacity:.2;animation:h0d 7s ease-in-out infinite}
+.h0l{stroke:var(--accent);stroke-width:1}
+.h0c{fill:var(--accent)}
+.h0v{stroke:var(--accent);stroke-width:9;stroke-linecap:round;fill:none;stroke-dasharray:176;animation:h0v 7s ease-in-out infinite}
+.h0a{opacity:0;animation:h0a 7s ease-in-out infinite}
+.h0b{opacity:0;animation:h0b 7s ease-in-out infinite}
+.h0c2{opacity:0;animation:h0c 7s ease-in-out infinite}
+.h0e{opacity:0;animation:h0e 7s ease-in-out infinite}
+@keyframes h0d{0%,4%{opacity:.2}12%,72%{opacity:1}92%,100%{opacity:.2}}
+@keyframes h0v{0%,8%{stroke-dashoffset:176}40%,90%{stroke-dashoffset:39}100%{stroke-dashoffset:176}}
+@keyframes h0a{0%,40%{opacity:0}46%,90%{opacity:1}97%,100%{opacity:0}}
+@keyframes h0b{0%,50%{opacity:0}56%,90%{opacity:1}97%,100%{opacity:0}}
+@keyframes h0c{0%,58%{opacity:0}64%,90%{opacity:1}97%,100%{opacity:0}}
+@keyframes h0e{0%,66%{opacity:0}72%,90%{opacity:1}97%,100%{opacity:0}}
+.h1clip{transform-origin:60px 0;animation:h1w 7s ease-in-out infinite}
+.h1d{fill:var(--accent);offset-rotate:0deg;animation:h1d 7s ease-in-out infinite}
+.h1h{fill:none;stroke:var(--accent);stroke-opacity:.5;offset-rotate:0deg;animation:h1d 7s ease-in-out infinite}
+.h1o{opacity:0;animation:h1o 7s ease-in-out infinite}
+@keyframes h1w{0%,8%{transform:scaleX(0)}45%,100%{transform:scaleX(1)}}
+@keyframes h1d{0%,8%{offset-distance:0%;opacity:1}45%{offset-distance:100%;opacity:1}52%,100%{offset-distance:100%;opacity:0}}
+@keyframes h1o{0%,52%{opacity:0}62%,92%{opacity:1}100%{opacity:0}}
+.h2base{animation:h2b 6s ease-in-out infinite}
+.h2g{fill:var(--accent);transform-box:fill-box;transform-origin:center;animation:h2g 6s ease-in-out infinite}
+.h2m{fill:#F5B84B;transform-box:fill-box;transform-origin:center;animation:h2m 6s ease-in-out infinite}
+@keyframes h2b{0%,100%{opacity:.25}50%{opacity:.5}}
+@keyframes h2g{0%,100%{transform:scale(.6);opacity:.45}50%{transform:scale(2.8);opacity:1}}
+@keyframes h2m{0%,100%{transform:scale(2.8);opacity:1}50%{transform:scale(.6);opacity:.45}}
+.h3ch{opacity:.4}
+.h3ch rect{fill:#10151A;stroke:var(--line)}
+.h3ch text{fill:var(--tx);font-family:'Inter',sans-serif;font-size:13px;text-anchor:middle}
+.h3w{animation:h3a 8s ease-in-out infinite}
+.h3w rect,.h3c rect{stroke:var(--accent)}
+.h3c{animation:h3b 8s ease-in-out infinite}
+.h3l1{opacity:0;animation:h3a 8s ease-in-out infinite}
+.h3l2{opacity:0;animation:h3b 8s ease-in-out infinite}
+.h3d{fill:var(--accent);offset-rotate:0deg;animation:h3d 8s ease-in-out infinite}
+.h3p{opacity:0;transform-box:fill-box;transform-origin:center;animation:h3p 8s ease-in-out infinite}
+@keyframes h3a{0%,12%{opacity:.4}20%,38%{opacity:1}46%,100%{opacity:.4}}
+@keyframes h3b{0%,48%{opacity:.4}56%,70%{opacity:1}78%,100%{opacity:.4}}
+@keyframes h3d{0%,4%{offset-distance:0%;opacity:1}82%{offset-distance:100%;opacity:1}90%,100%{offset-distance:100%;opacity:0}}
+@keyframes h3p{0%,80%{opacity:0;transform:scale(.6)}88%,96%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+.h3l1{animation-name:h3l1k}
+.h3l2{animation-name:h3l2k}
+@keyframes h3l1k{0%,12%{opacity:0}20%,38%{opacity:1}46%,100%{opacity:0}}
+@keyframes h3l2k{0%,48%{opacity:0}56%,70%{opacity:1}78%,100%{opacity:0}}
+.h4d{r:6;animation:h4m 8s cubic-bezier(.6,0,.2,1) infinite}
+.h4q1{fill:#9BA7B0;animation:h4m 8s cubic-bezier(.6,0,.2,1) infinite,h4c1 8s ease-in-out infinite}
+.h4q2{fill:#9BA7B0;animation:h4m 8s cubic-bezier(.6,0,.2,1) infinite,h4c2 8s ease-in-out infinite}
+.h4q3{fill:#9BA7B0;animation:h4m 8s cubic-bezier(.6,0,.2,1) infinite}
+.h4q4{fill:#9BA7B0;animation:h4m 8s cubic-bezier(.6,0,.2,1) infinite,h4c4 8s ease-in-out infinite}
+.h4a{opacity:0;animation:h4a 8s ease-in-out infinite}
+@keyframes h4m{0%,8%{transform:translate(var(--sx),var(--sy))}38%,88%{transform:translate(0,0)}100%{transform:translate(var(--sx),var(--sy))}}
+@keyframes h4c1{0%,12%{fill:#9BA7B0}38%,88%{fill:#4FE3C1}100%{fill:#9BA7B0}}
+@keyframes h4c2{0%,12%{fill:#9BA7B0}38%,88%{fill:#9FC4FF}100%{fill:#9BA7B0}}
+@keyframes h4c4{0%,12%{fill:#9BA7B0}38%,88%{fill:#F5B84B}100%{fill:#9BA7B0}}
+@keyframes h4a{0%,36%{opacity:0}46%,88%{opacity:1}96%,100%{opacity:0}}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.sv-root button.sgb{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);font-family:inherit;font-size:14px;cursor:pointer;transition:border-color .2s,background .2s}
+.sv-root button.sgb[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);font-weight:600}
+.acts{display:flex;flex-direction:column;gap:10px;width:100%}
+.act{display:grid;grid-template-columns:60px 104px minmax(0,1fr);gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:14px;animation:up .5s cubic-bezier(.2,.7,.2,1) both}
+.act small{display:block;color:var(--mu);font-size:12px}
+.bars{display:flex;flex-direction:column;gap:14px;width:100%}
+.bl{display:flex;justify-content:space-between;font-size:14px;color:var(--mu);margin-bottom:6px}
+.bl b{color:var(--tx)}
+.bt{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bt i{display:block;height:100%;border-radius:99px;background:#566470;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.bt i.ac{background:var(--accent)}
+.h5s{opacity:0;animation:h5s 8s ease-in-out infinite}
+.h5b{fill:var(--line);animation:h5f 8s ease-in-out infinite}
+.h5k{opacity:0;animation:h5k 8s ease-in-out infinite}
+.h5v{opacity:0;animation:h5v 8s ease-in-out infinite}
+@keyframes h5s{0%,6%{transform:translateY(0);opacity:0}9%{opacity:1}34%{transform:translateY(188px);opacity:1}38%,100%{transform:translateY(188px);opacity:0}}
+@keyframes h5f{0%,34%{fill:#232C34}44%,90%{fill:#2E8F7B}100%{fill:#232C34}}
+@keyframes h5k{0%,40%{opacity:0}46%,90%{opacity:1}97%,100%{opacity:0}}
+@keyframes h5v{0%,64%{opacity:0}72%,92%{opacity:1}98%,100%{opacity:0}}
+.h6b{animation:h6d 9s cubic-bezier(.2,.8,.2,1) infinite both}
+.h6b rect{fill:#10151A;stroke:var(--accent);stroke-opacity:.55}
+.h6b text{fill:var(--tx);font-family:'Inter',sans-serif;font-size:13px;text-anchor:middle}
+.h6p{fill:var(--accent);offset-rotate:0deg;animation:h6p 3.2s linear infinite}
+@keyframes h6d{0%{opacity:0;transform:translateY(-70px)}10%,86%{opacity:1;transform:translateY(0)}95%,100%{opacity:0;transform:translateY(0)}}
+@keyframes h6p{0%{offset-distance:0%;opacity:0}12%{opacity:1}88%{opacity:1}100%{offset-distance:100%;opacity:0}}
+.chat{display:flex;flex-direction:column;gap:10px;height:320px;overflow-y:auto;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.bub{max-width:88%;padding:10px 14px;border-radius:14px;font-size:14px;animation:up .4s cubic-bezier(.2,.7,.2,1) both}
+.bub.u{align-self:flex-end;background:color-mix(in srgb,var(--accent) 14%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+.bub.a{align-self:flex-start;background:var(--s2);border:1px solid var(--line)}
+.acts2{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:11px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--accent)}
+.typing{align-self:flex-start;display:flex;gap:4px;padding:12px 14px;border-radius:14px;background:var(--s2);border:1px solid var(--line)}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--mu);animation:tp 1s ease-in-out infinite}
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.qs{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px;margin-top:8px}
+.comp{display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:14px;opacity:.4;transition:opacity .4s,border-color .4s,background .4s,transform .4s}
+.comp.in{opacity:1;border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.comp svg{color:var(--accent);flex:0 0 18px}
+.dm{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:32px 48px;align-items:center}
+.ctl{margin-bottom:22px}
+.ctl-h{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--mu);margin-bottom:6px}
+.ctl-h b{color:var(--tx);font-weight:600}
+.sv-root button.tog{display:inline-flex;align-items:center;gap:12px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--tx);font-family:inherit;font-size:14px;cursor:pointer;transition:border-color .2s,background .2s}
+.sv-root button.tog[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent) 60%,var(--line));background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.tg{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;transition:background .25s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s}
+.tog[aria-pressed="true"] .tg{background:var(--accent)}
+.tog[aria-pressed="true"] .tg::after{transform:translateX(14px);background:#04130F}
+.out{display:flex;flex-direction:column;align-items:center;gap:14px}
+.gg{width:100%;max-width:300px;height:auto}
+.gg .v{fill:none;stroke:var(--accent);stroke-width:12;stroke-linecap:round;stroke-dasharray:251.3;transition:stroke-dashoffset .5s cubic-bezier(.2,.7,.2,1)}
+.dec{display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;font-weight:600;font-size:14px;transition:all .3s}
+.dec.ok{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.dec.no{background:rgba(245,184,75,.12);color:#F5B84B;border:1px solid rgba(245,184,75,.4)}
+.rs{list-style:none;margin:0;padding:0;width:100%;max-width:340px;display:flex;flex-direction:column;gap:8px}
+.rs li{display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;font-size:14px;background:var(--bg)}
+.sp{color:var(--accent)}
+.sn{color:#F5B84B}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpi{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--bg);display:flex;flex-direction:column;gap:4px}
+.kpi span{font-size:12px;color:var(--mu)}
+.kpi b{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;letter-spacing:-.02em}
+.note{font-size:13px;color:var(--mu);text-align:center}
+.urows{display:flex;flex-direction:column;gap:10px}
+.urow{display:grid;grid-template-columns:84px minmax(0,1fr) 64px 110px;gap:12px;align-items:center;font-size:14px}
+.ubar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.ubar i{display:block;height:100%;border-radius:99px;background:var(--accent);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.ul{text-align:right;font-weight:600}
+.chip{display:inline-flex;justify-content:center;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;border:1px solid var(--line);color:var(--mu);transition:all .3s}
+.chip.up{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.chip.down{color:#F5B84B;border-color:rgba(245,184,75,.45);background:rgba(245,184,75,.1)}
+.chip.frz{color:#9FC4FF;border-color:rgba(159,196,255,.45);background:rgba(159,196,255,.08)}
+@media (max-width:700px){
+  .urow{grid-template-columns:70px minmax(0,1fr) 56px;row-gap:6px}
+  .urow .chip{grid-column:1/-1;justify-self:start}
+  .hide-sm{display:none}
+  .pv-sec{padding:64px 0}
+  .ph{padding:40px 0 56px}
+  .demo{padding:20px}
+}
+@media (max-width:900px){
+  .nav-links{display:none}
+  .sec{padding:80px 0}
+  .cta{padding:40px 24px}
+  .hero{min-height:680px}
+  .hero-fade{background:linear-gradient(180deg,rgba(10,13,16,.55) 0%,rgba(10,13,16,.8) 70%,var(--bg) 100%)}
+  .flow{grid-template-columns:minmax(0,1fr);gap:36px;margin-top:56px}
+  .step{flex-direction:row;align-items:flex-start;text-align:left;gap:20px}
+  .step p{max-width:none}
+  .fl{top:28px;bottom:28px;left:27px;right:auto;width:2px;height:auto}
+  .fl b{display:none}
+  .rv-on .flow .fl i{transform:scaleY(0);transform-origin:top}
+  .rv-on .flow.in .fl i{transform:scaleY(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</helmet>
+<div class="sv-root" style="--accent: {{accent}}">
+
+<header class="nav">
+<div class="wrap nav-in">
+<a class="logo" href="#top" aria-label="Sora Valley, inicio">
+<svg class="ic" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 19L9 7l4 7 3-4.5L21.5 19"></path></svg>
+Sora Valley
+</a>
+<nav class="nav-links" aria-label="Principal">
+<a href="#productos">Productos</a>
+<a href="#como-funciona">Cómo funciona</a>
+<a href="#nosotros">Nosotros</a>
+<a href="#planes">Planes</a>
+</nav>
+<a class="btn btn-sm" href="#contacto">Agenda una conversación</a>
+</div>
+</header>
+
+<main id="top">
+
+<section class="hero" aria-label="Sora Valley">
+<div class="glow"></div>
+<svg class="net-svg" viewBox="0 0 1440 780" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<g class="net">
+<line class="edge" x1="1190" y1="70" x2="1080" y2="150"></line>
+<line class="edge" x1="1080" y1="150" x2="1215" y2="240"></line>
+<line class="edge" x1="1080" y1="150" x2="860" y2="210"></line>
+<line class="edge" x1="1080" y1="150" x2="1000" y2="310"></line>
+<line class="edge" x1="1215" y1="240" x2="1335" y2="350"></line>
+<line class="edge" x1="1215" y1="240" x2="1000" y2="310"></line>
+<line class="edge" x1="1215" y1="240" x2="1395" y2="170"></line>
+<line class="edge" x1="1000" y1="310" x2="1135" y2="420"></line>
+<line class="edge" x1="1000" y1="310" x2="860" y2="210"></line>
+<line class="edge" x1="860" y1="210" x2="760" y2="340"></line>
+<line class="edge" x1="860" y1="210" x2="660" y2="160"></line>
+<line class="edge" x1="660" y1="160" x2="560" y2="270"></line>
+<line class="edge" x1="760" y1="340" x2="560" y2="270"></line>
+<line class="edge" x1="760" y1="340" x2="930" y2="480"></line>
+<line class="edge" x1="1000" y1="310" x2="930" y2="480"></line>
+<line class="edge" x1="930" y1="480" x2="1135" y2="420"></line>
+<line class="edge" x1="1135" y1="420" x2="1335" y2="350"></line>
+<line class="edge" x1="1135" y1="420" x2="1265" y2="530"></line>
+<line class="edge" x1="1335" y1="350" x2="1265" y2="530"></line>
+<line class="edge" x1="1265" y1="530" x2="1370" y2="620"></line>
+<line class="edge" x1="1335" y1="350" x2="1370" y2="620"></line>
+<line class="edge" x1="930" y1="480" x2="1045" y2="600"></line>
+<line class="edge" x1="1135" y1="420" x2="1045" y2="600"></line>
+<line class="edge" x1="1045" y1="600" x2="1265" y2="530"></line>
+<line class="edge" x1="1045" y1="600" x2="800" y2="570"></line>
+<line class="edge" x1="930" y1="480" x2="800" y2="570"></line>
+<line class="edge" x1="300" y1="200" x2="560" y2="270"></line>
+<line class="edge" x1="300" y1="200" x2="180" y2="430"></line>
+<line class="edge" x1="180" y1="430" x2="430" y2="540"></line>
+<line class="edge" x1="430" y1="540" x2="250" y2="650"></line>
+<line class="edge" x1="180" y1="430" x2="250" y2="650"></line>
+<line class="edge" x1="560" y1="270" x2="430" y2="540"></line>
+<line class="edge" x1="430" y1="540" x2="800" y2="570"></line>
+<circle class="nd" cx="1190" cy="70" r="3" style="animation-delay:-0.5s"></circle>
+<circle class="nd" cx="1080" cy="150" r="5" style="animation-delay:-1.8s"></circle>
+<circle class="ring" cx="1080" cy="150" r="13"></circle>
+<circle class="nd" cx="1215" cy="240" r="4" style="animation-delay:-3s"></circle>
+<circle class="nd" cx="1000" cy="310" r="5" style="animation-delay:-0.9s"></circle>
+<circle class="ring" cx="1000" cy="310" r="13"></circle>
+<circle class="nd" cx="1335" cy="350" r="4" style="animation-delay:-2.2s"></circle>
+<circle class="nd" cx="1135" cy="420" r="5" style="animation-delay:-3.6s"></circle>
+<circle class="ring" cx="1135" cy="420" r="13"></circle>
+<circle class="nd" cx="930" cy="480" r="4" style="animation-delay:-1.2s"></circle>
+<circle class="nd" cx="1265" cy="530" r="4" style="animation-delay:-2.7s"></circle>
+<circle class="nd" cx="1045" cy="600" r="3" style="animation-delay:-4s"></circle>
+<circle class="nd" cx="1370" cy="620" r="3" style="animation-delay:-0.2s"></circle>
+<circle class="nd" cx="860" cy="210" r="4" style="animation-delay:-3.3s"></circle>
+<circle class="nd" cx="760" cy="340" r="3" style="animation-delay:-1.5s"></circle>
+<circle class="nd" cx="660" cy="160" r="3" style="animation-delay:-2.4s"></circle>
+<circle class="nd" cx="560" cy="270" r="3" style="animation-delay:-0.7s"></circle>
+<circle class="nd" cx="800" cy="570" r="3" style="animation-delay:-3.9s"></circle>
+<circle class="nd" cx="1395" cy="170" r="3" style="animation-delay:-2s"></circle>
+<circle class="nd" cx="300" cy="200" r="3" style="animation-delay:-1s"></circle>
+<circle class="nd" cx="180" cy="430" r="3" style="animation-delay:-3.1s"></circle>
+<circle class="nd" cx="430" cy="540" r="3" style="animation-delay:-2.1s"></circle>
+<circle class="nd" cx="250" cy="650" r="3" style="animation-delay:-0.4s"></circle>
+</g>
+</svg>
+<div class="hero-fade"></div>
+<div class="wrap">
+<div style="display:flex;flex-direction:column;align-items:flex-start;gap:28px;padding:96px 0 112px">
+<div class="pill h-in" style="--d:0s">
+<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 19L9 7l4 7 3-4.5L21.5 19"></path></svg>
+<b>Sora Valley</b>
+<i></i>
+<span>Latinoamérica, empezando por México</span>
+</div>
+<h1 class="h1 h-in" style="--d:.12s">Modelos de riesgo listos para producción, <span>sin tener que construir un equipo de ML.</span></h1>
+<p class="lead h-in" style="--d:.24s">Machine learning y decisioning para fintechs de BNPL y microcréditos.</p>
+<div class="h-in" style="--d:.36s;display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+<a class="btn" href="#contacto">Agenda una conversación
+<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</a>
+<a class="ghost" href="#productos">Ver productos</a>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="problema" aria-label="El problema">
+<div class="wrap">
+<div data-reveal="">
+<p class="eyebrow">El problema</p>
+<h2 class="h2">Lanzar crédito sin un equipo de riesgo no es opción.</h2>
+</div>
+<div class="probs">
+<div class="pt" data-reveal="" style="--d:.05s">
+<span class="n">01</span>
+<div class="ic-wrap"><svg class="ic" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path></svg></div>
+<h3>Riesgo desde el día 1</h3>
+<p>Cada solicitud necesita una decisión informada desde el lanzamiento.</p>
+</div>
+<div class="pt" data-reveal="" style="--d:.15s">
+<span class="n">02</span>
+<div class="ic-wrap"><svg class="ic" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"></circle><path d="M3 19c.6-3.3 3-5 6-5s5.4 1.7 6 5"></path><path d="M16 5.5a3.2 3.2 0 0 1 0 6M18.5 14.5c1.4.7 2.2 2 2.5 4.5"></path></svg></div>
+<h3>Talento de ML escaso y caro</h3>
+<p>Contratar y retener un equipo propio consume tiempo y presupuesto.</p>
+</div>
+<div class="pt" data-reveal="" style="--d:.25s">
+<span class="n">03</span>
+<div class="ic-wrap"><svg class="ic" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg></div>
+<h3>Meses para montar infraestructura</h3>
+<p>Datos, entrenamiento y despliegue retrasan tu salida al mercado.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="core" aria-label="Sora Core" style="background:var(--s1);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+<div class="wrap">
+<div class="core-wrap">
+<div class="core-l" data-reveal="">
+<p class="eyebrow">Sora Core</p>
+<h2 class="h2">Un solo cerebro para todo el ciclo de vida del crédito.</h2>
+<p class="lead" style="margin-top:20px">Cada producto se conecta al mismo núcleo. Lo que aprende uno mejora a los demás.</p>
+<ul class="loops">
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-refresh"></use></svg>Lo que pasa en cobranza reentrena la originación.</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-refresh"></use></svg>El comportamiento de la cartera afina cada línea asignada.</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-refresh"></use></svg>Las campañas aprenden de cómo paga cada segmento.</li>
+</ul>
+</div>
+<div class="core-r" data-reveal="" style="--d:.1s">
+<svg class="core-svg" viewBox="0 0 720 520" role="img" aria-label="Siete productos conectados a un núcleo central que se pasan señales entre sí">
+<line class="cs-edge" x1="360" y1="70" x2="360" y2="260"></line>
+<line class="cs-edge" x1="571" y1="141" x2="360" y2="260"></line>
+<line class="cs-edge" x1="623" y1="302" x2="360" y2="260"></line>
+<line class="cs-edge" x1="477" y1="431" x2="360" y2="260"></line>
+<line class="cs-edge" x1="243" y1="431" x2="360" y2="260"></line>
+<line class="cs-edge" x1="97" y1="302" x2="360" y2="260"></line>
+<line class="cs-edge" x1="149" y1="141" x2="360" y2="260"></line>
+<path class="cs-edge2" d="M97 302L360 260L623 302"></path>
+<circle class="sg" r="3" style="offset-path:path('M360 70L360 260');animation-delay:0s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M571 141L360 260');animation-delay:.55s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M623 302L360 260');animation-delay:1.1s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M477 431L360 260');animation-delay:1.65s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M243 431L360 260');animation-delay:2.2s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M97 302L360 260');animation-delay:2.75s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M149 141L360 260');animation-delay:3.3s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L360 70');animation-delay:2.1s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L571 141');animation-delay:2.65s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L623 302');animation-delay:3.2s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L477 431');animation-delay:3.75s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L243 431');animation-delay:4.3s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L97 302');animation-delay:4.85s"></circle>
+<circle class="sg" r="3" style="offset-path:path('M360 260L149 141');animation-delay:5.4s"></circle>
+<circle class="sg sg2" r="5" style="offset-path:path('M97 302L360 260L623 302');animation-delay:0s"></circle>
+<circle class="cs-halo" cx="360" cy="260" r="46"></circle>
+<circle class="cs-halo" cx="360" cy="260" r="46" style="animation-delay:-2s"></circle>
+<circle class="cs-core" cx="360" cy="260" r="46"></circle>
+<text class="cs-core-t" x="360" y="256">Sora</text>
+<text class="cs-core-t" x="360" y="276">Core</text>
+<g transform="translate(360 70)"><circle class="cs-node" r="26" style="animation-delay:0s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-circles"></use></svg><text class="cs-lbl" y="-40">Audience</text></g>
+<g transform="translate(571 141)"><circle class="cs-node" r="26" style="animation-delay:1.2s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bot"></use></svg><text class="cs-lbl" y="46">Agents</text></g>
+<g transform="translate(623 302)"><circle class="cs-node" r="26" style="animation-delay:2.4s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-gauge"></use></svg><text class="cs-lbl" y="46">Origin</text></g>
+<g transform="translate(477 431)"><circle class="cs-node" r="26" style="animation-delay:3.6s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-sliders"></use></svg><text class="cs-lbl" y="46">Limit</text></g>
+<g transform="translate(243 431)"><circle class="cs-node" r="26" style="animation-delay:4.8s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trend"></use></svg><text class="cs-lbl" y="46">Pulse</text></g>
+<g transform="translate(97 302)"><circle class="cs-node" r="26" style="animation-delay:6s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-send"></use></svg><text class="cs-lbl" y="46">Collect</text></g>
+<g transform="translate(149 141)"><circle class="cs-node" r="26" style="animation-delay:7.2s"></circle><svg x="-11" y="-11" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cube"></use></svg><text class="cs-lbl" y="46">Forge</text></g>
+</svg>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="productos" aria-label="Productos">
+<div class="wrap">
+<div data-reveal="">
+<p class="eyebrow">Productos</p>
+<h2 class="h2">Todo el ciclo de crédito, listo para usar.</h2>
+</div>
+<div style="margin-top:56px">
+
+<div class="grp">
+<div class="grp-h" data-reveal="">
+<h3>Riesgo</h3>
+<p>Quién entra, cuánto recibe y cómo se cobra.</p>
+</div>
+<div class="grid2">
+<div class="cw" data-reveal="" style="--d:.04s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 17a8.5 8.5 0 1 1 15 0"></path><path d="M12 17l3.5-5"></path><circle cx="12" cy="17" r="1"></circle></svg></div>
+<span class="ptag">Sora Origin</span>
+<h3 style="margin-top:6px">Originación</h3>
+<p>Score para aprobar nuevos usuarios con confianza.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="0" onClick="{{open0}}" aria-label="Abrir Sora Origin, Originación"></button>
+</div></div>
+<div class="cw" data-reveal="" style="--d:.1s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"></path><circle cx="16" cy="8" r="2"></circle><circle cx="8" cy="16" r="2"></circle></svg></div>
+<span class="ptag">Sora Limit</span>
+<h3 style="margin-top:6px">Asignación de línea</h3>
+<p>Cuánto prestar a cada usuario.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="1" onClick="{{open1}}" aria-label="Abrir Sora Limit, Asignación de línea"></button>
+</div></div>
+<div class="cw" data-reveal="" style="--d:.16s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"></path><path d="M15 7h5v5"></path></svg></div>
+<span class="ptag">Sora Pulse</span>
+<h3 style="margin-top:6px">Gestión de línea</h3>
+<p>Aumentos y recortes según el comportamiento.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="2" onClick="{{open2}}" aria-label="Abrir Sora Pulse, Gestión de línea"></button>
+</div></div>
+<div class="cw" data-reveal="" style="--d:.22s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 3L10 14"></path><path d="M21 3l-7 18-4-7-7-4z"></path></svg></div>
+<span class="ptag">Sora Collect</span>
+<h3 style="margin-top:6px">Cobranza inteligente</h3>
+<p>A quién cobrar, cuándo y por qué canal.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="3" onClick="{{open3}}" aria-label="Abrir Sora Collect, Cobranza inteligente"></button>
+</div></div>
+</div>
+</div>
+
+<div class="grp">
+<div class="grp-h" data-reveal="">
+<h3>Crecimiento</h3>
+<p>Activa a los usuarios correctos.</p>
+</div>
+<div class="grid2">
+<div class="cw" data-reveal="" style="--d:.04s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="5"></circle><circle cx="15" cy="12" r="5"></circle></svg></div>
+<span class="ptag">Sora Audience</span>
+<h3 style="margin-top:6px">Segmentación y campañas</h3>
+<p>Qué usuarios activar y con qué incentivo.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="4" onClick="{{open4}}" aria-label="Abrir Sora Audience, Segmentación y campañas"></button>
+</div></div>
+</div>
+</div>
+
+<div class="grp" style="border-bottom:1px solid var(--line)">
+<div class="grp-h" data-reveal="">
+<h3>IA y plataforma</h3>
+<p>Automatiza y opera en producción.</p>
+</div>
+<div class="grid2">
+<div class="cw" data-reveal="" style="--d:.04s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"></rect><path d="M12 4v4M9.5 13v1.5M14.5 13v1.5"></path><circle cx="12" cy="3.5" r=".8"></circle></svg></div>
+<span class="ptag">Sora Agents</span>
+<h3 style="margin-top:6px">Agentes de IA</h3>
+<p>KYC, verificación documental y atención al cliente.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="5" onClick="{{open5}}" aria-label="Abrir Sora Agents, Agentes de IA"></button>
+</div></div>
+<div class="cw" data-reveal="" style="--d:.1s"><div class="card">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"></path></svg></div>
+<span class="ptag">Sora Forge</span>
+<h3 style="margin-top:6px">MLOps en tu casa</h3>
+<p>Montamos la plataforma en producción para tu equipo.</p>
+<span class="go">Ver producto <svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg></span>
+<button type="button" class="hit" data-pc="6" onClick="{{open6}}" aria-label="Abrir Sora Forge, MLOps en tu casa"></button>
+</div></div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section class="sec" id="como-funciona" aria-label="Cómo funciona" style="background:var(--s1);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+<div class="wrap">
+<div data-reveal="">
+<p class="eyebrow">Cómo funciona</p>
+<h2 class="h2">De tus datos a decisiones en producción.</h2>
+</div>
+<div class="flow" data-reveal="">
+<div class="fl"><i></i><b></b></div>
+<div class="step">
+<div class="node" style="--d:.3s"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"></ellipse><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"></path></svg></div>
+<div><p class="k" style="margin:0 0 6px;max-width:none">PASO 1</p><h3>Conectas tus datos</h3><p>Integramos las fuentes que ya tienes.</p></div>
+</div>
+<div class="step">
+<div class="node" style="--d:.9s"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2"></circle><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="12" r="2"></circle><path d="M8 6l8 6M8 18l8-6"></path></svg></div>
+<div><p class="k" style="margin:0 0 6px;max-width:none">PASO 2</p><h3>Entrenamos con tus datos</h3><p>Modelos hechos a la medida de tu operación.</p></div>
+</div>
+<div class="step">
+<div class="node" style="--d:1.5s"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"></path></svg></div>
+<div><p class="k" style="margin:0 0 6px;max-width:none">PASO 3</p><h3>Lo consumes por API</h3><p>Decisiones en tiempo real dentro de tu producto.</p></div>
+</div>
+<div class="step">
+<div class="node" style="--d:2.1s"><svg class="ic" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"></path></svg></div>
+<div><p class="k" style="margin:0 0 6px;max-width:none">PASO 4</p><h3>Monitoreamos y mejoramos</h3><p>Seguimiento continuo y reentrenamiento.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="nosotros" aria-label="Por qué nosotros">
+<div class="wrap">
+<div class="why">
+<div class="why-l" data-reveal="">
+<p class="eyebrow">Por qué nosotros</p>
+<h2 class="h2">Un equipo que ya operó riesgo a escala.</h2>
+<p class="lead" style="margin-top:20px">Hemos operado modelos de riesgo en BNPL y microcréditos en Latinoamérica. Ahora lo hacemos para tu fintech.</p>
+</div>
+<div class="why-r">
+<div class="wr" data-reveal="" style="--d:.05s">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 5-9 5-9-5z"></path><path d="M3 14l9 5 9-5"></path></svg></div>
+<div><h3>Modelos que operan en producción</h3><p>Experiencia a escala, más allá del prototipo.</p></div>
+</div>
+<div class="wr" data-reveal="" style="--d:.15s">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></div>
+<div><h3>Conocimiento de la región</h3><p>BNPL y microcréditos en Latinoamérica.</p></div>
+</div>
+<div class="wr" data-reveal="" style="--d:.25s">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"></circle><path d="M3 19c.6-3.3 3-5 6-5s5.4 1.7 6 5"></path><path d="M16 5.5a3.2 3.2 0 0 1 0 6M18.5 14.5c1.4.7 2.2 2 2.5 4.5"></path></svg></div>
+<div><h3>Tu equipo de ML, ampliado</h3><p>Nos integramos sin que tengas que contratar.</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="planes" aria-label="Planes" style="padding-top:48px">
+<div class="wrap">
+<div data-reveal="">
+<p class="eyebrow">Planes</p>
+<h2 class="h2">Elige cómo empezar.</h2>
+</div>
+<div class="plans">
+<div class="cw" data-reveal="" style="--d:.05s"><div class="card plan">
+<span class="pn">Starter</span>
+<p class="price">A conversar</p>
+<p class="pd">Para lanzar tu primer modelo.</p>
+<ul>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Un producto de riesgo en producción</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Acceso por API</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Monitoreo del modelo</li>
+</ul>
+<a class="ghost" href="#contacto">Conversemos</a>
+</div></div>
+<div class="cw" data-reveal="" style="--d:.15s"><div class="card plan">
+<span class="pn">Growth</span>
+<p class="price">A conversar</p>
+<p class="pd">Para escalar tu cartera.</p>
+<ul>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Productos de riesgo y crecimiento</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Reentrenamiento continuo</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Acompañamiento de nuestro equipo</li>
+</ul>
+<a class="ghost" href="#contacto">Conversemos</a>
+</div></div>
+<div class="cw" data-reveal="" style="--d:.25s"><div class="card plan">
+<span class="pn">Scale</span>
+<p class="price">A conversar</p>
+<p class="pd">Para operar a gran volumen.</p>
+<ul>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Catálogo completo de productos</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Agentes de IA y MLOps en tu casa</li>
+<li><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>Equipo dedicado</li>
+</ul>
+<a class="ghost" href="#contacto">Conversemos</a>
+</div></div>
+</div>
+</div>
+</section>
+
+<section class="sec" id="contacto" aria-label="Contacto" style="padding-top:48px">
+<div class="wrap">
+<div class="cta" data-reveal="">
+<div class="glow2"></div>
+<div class="cta-in">
+<div class="cta-l">
+<p class="eyebrow">Hablemos</p>
+<h2 class="h2">Pon tus modelos de riesgo en producción.</h2>
+<p class="lead" style="margin-top:20px">Cuéntanos de tu fintech y te escribimos para agendar una conversación.</p>
+</div>
+<div class="cta-r">
+<sc-if value="{{notSent}}" hint-placeholder-val="{{ true }}">
+<form onSubmit="{{submit}}">
+<div class="fld"><label for="f-nombre">Nombre</label><input id="f-nombre" name="nombre" type="text" autocomplete="name" required=""></div>
+<div class="fld"><label for="f-empresa">Empresa</label><input id="f-empresa" name="empresa" type="text" autocomplete="organization" required=""></div>
+<div class="fld"><label for="f-correo">Correo</label><input id="f-correo" name="correo" type="email" autocomplete="email" required=""></div>
+<button class="btn" type="submit" style="width:100%;margin-top:8px">Agenda una conversación
+<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+</button>
+</form>
+</sc-if>
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<div class="sent" role="status">
+<svg class="ic" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l3 3 5-6"></path></svg>
+<div><h3>Gracias, recibimos tus datos.</h3><p>Te escribiremos pronto para agendar la conversación.</p></div>
+</div>
+</sc-if>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.5 17a8.5 8.5 0 1 1 15 0"></path><path d="M12 17l3.5-5"></path><circle cx="12" cy="17" r="1"></circle></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"></path><circle cx="16" cy="8" r="2"></circle><circle cx="8" cy="16" r="2"></circle></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-9"></path><path d="M15 7h5v5"></path></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L10 14"></path><path d="M21 3l-7 18-4-7-7-4z"></path></symbol>
+<symbol id="i-circles" viewBox="0 0 24 24"><circle cx="9" cy="12" r="5"></circle><circle cx="15" cy="12" r="5"></circle></symbol>
+<symbol id="i-bot" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="11" rx="3"></rect><path d="M12 4v4M9.5 13v1.5M14.5 13v1.5"></path><circle cx="12" cy="3.5" r=".8"></circle></symbol>
+<symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"></path><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"></path></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4l9 5-9 5-9-5z"></path><path d="M3 14l9 5 9-5"></path></symbol>
+<symbol id="i-arrow-r" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></symbol>
+<symbol id="i-arrow-l" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"></path></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"></path></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"></path><circle cx="12" cy="12" r="2.8"></circle></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-4.5L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4.5L20 15M20 20v-5h-5"></path></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L5 18.5A1.5 1.5 0 0 0 6.3 21h11.4a1.5 1.5 0 0 0 1.3-2.5L14 9V3"></path><path d="M7.5 15h9"></path></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 16.5h-19z"></path><path d="M12 10v4.5M12 17.5v.5"></path></symbol>
+<symbol id="i-history" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1L3.5 8.5M3.5 4v4.5H8M12 7.5V12l3 2"></path></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><circle cx="12" cy="12" r="4.5"></circle><circle cx="12" cy="12" r="1"></circle></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v10.5H9.5L5.5 20v-4H4z"></path></symbol>
+<symbol id="i-scales" viewBox="0 0 24 24"><path d="M12 4v16M6 20h12M5 7h14"></path><path d="M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"></path></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z"></path><path d="M14 3v5h5M9 13h7M9 17h5"></path></symbol>
+<symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.2"></circle><circle cx="18" cy="18" r="2.2"></circle><path d="M8 6h6a3 3 0 0 1 0 6h-4a3 3 0 0 0 0 6h6"></path></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 10a4.2 4.2 0 0 1-.5 8.5z"></path></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"></path><path d="M5 17a3 3 0 0 1 3-3h11"></path></symbol>
+<symbol id="i-split" viewBox="0 0 24 24"><path d="M12 20v-7M12 13L6 6M12 13l6-7M4 6h4M16 6h4"></path></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"></path></symbol>
+<symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M14.5 9.5c-.5-1-1.5-1.5-2.7-1.5-1.5 0-2.6.8-2.6 2s1 1.7 2.8 2.1c1.8.4 2.8.9 2.8 2.1s-1.2 2-2.7 2c-1.3 0-2.4-.6-2.9-1.7M12 6.5V8M12 16v1.5"></path></symbol>
+</svg>
+
+<div class="pv" aria-hidden="true" role="dialog" aria-label="Vista de producto">
+<div class="pv-top">
+<div class="wrap pv-bar">
+<button type="button" class="pbtn" onClick="{{close}}"><svg class="ic" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-l"></use></svg>Volver al catálogo</button>
+<div class="pn-nav">
+<button type="button" class="pbtn" onClick="{{prev}}" aria-label="Producto anterior"><span aria-hidden="true">‹</span><span class="hide-sm">{{prevName}}</span></button>
+<span>{{counter}}</span>
+<button type="button" class="pbtn" onClick="{{next}}" aria-label="Producto siguiente"><span class="hide-sm">{{nextName}}</span><span aria-hidden="true">›</span></button>
+</div>
+</div>
+<div class="wrap">
+<ol class="stages" aria-label="Etapa del ciclo de crédito">
+<sc-for list="{{stages}}" as="s" hint-placeholder-count="5">
+<li class="stg {{s.cls}}">{{s.label}}</li>
+</sc-for>
+</ol>
+</div>
+</div>
+
+<div class="pv-body">
+
+<section class="ph" aria-label="Producto">
+<div class="glow3"></div>
+<div class="wrap ph-in">
+<div class="ph-l">
+<p class="eyebrow">{{P.short}}</p>
+<h1 class="ph-h">{{P.name}}</h1>
+<p class="ph-p">{{P.promise}}</p>
+<button type="button" class="btn" onClick="{{goDemo}}">Probar la demo
+<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg>
+</button>
+</div>
+<div class="ph-r">
+<div class="stage">
+<sc-if value="{{p0}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<text class="t-m" x="250" y="30">Solicitud entrante</text>
+<g class="h0g" style="transform:rotate(0deg);transform-origin:250px 170px;animation-delay:0s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(22.5deg);transform-origin:250px 170px;animation-delay:.15s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(45deg);transform-origin:250px 170px;animation-delay:.3s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(67.5deg);transform-origin:250px 170px;animation-delay:.45s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(90deg);transform-origin:250px 170px;animation-delay:.6s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(112.5deg);transform-origin:250px 170px;animation-delay:.75s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(135deg);transform-origin:250px 170px;animation-delay:.9s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(157.5deg);transform-origin:250px 170px;animation-delay:1.05s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(180deg);transform-origin:250px 170px;animation-delay:1.2s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(202.5deg);transform-origin:250px 170px;animation-delay:1.35s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(225deg);transform-origin:250px 170px;animation-delay:1.5s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(247.5deg);transform-origin:250px 170px;animation-delay:1.65s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(270deg);transform-origin:250px 170px;animation-delay:1.8s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(292.5deg);transform-origin:250px 170px;animation-delay:1.95s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(315deg);transform-origin:250px 170px;animation-delay:2.1s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<g class="h0g" style="transform:rotate(337.5deg);transform-origin:250px 170px;animation-delay:2.25s"><line class="h0l" x1="325" y1="170" x2="366" y2="170"></line><circle class="h0c" cx="372" cy="170" r="4"></circle></g>
+<path d="M194 185A56 56 0 0 1 306 185" fill="none" stroke="var(--line)" stroke-width="9" stroke-linecap="round"></path>
+<path class="h0v" d="M194 185A56 56 0 0 1 306 185"></path>
+<text class="t-s h0a" x="250" y="178">712</text>
+<g class="h0a"><rect x="205" y="212" width="90" height="26" rx="13" fill="var(--bg)" stroke="var(--accent)" stroke-opacity=".6"></rect><text class="t-a" x="250" y="230">Aprobada</text></g>
+<text class="t-m h0b" x="250" y="330">Pagos sin atrasos</text>
+<text class="t-m h0c2" x="250" y="350">Dispositivo verificado</text>
+<text class="t-m h0e" x="250" y="370">Actividad reciente en la app</text>
+</svg></sc-if>
+<sc-if value="{{p1}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<defs>
+<clipPath id="h1c"><rect class="h1clip" x="60" y="0" width="390" height="400"></rect></clipPath>
+<linearGradient id="h1g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.3"></stop><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"></stop></linearGradient>
+</defs>
+<path d="M60 330H450M60 330V60" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+<text class="t-m" x="255" y="362">Apetito de riesgo</text>
+<text class="t-m" x="26" y="195" transform="rotate(-90 26 195)">Ganancia esperada</text>
+<path clip-path="url(#h1c)" d="M60 300C140 270 200 110 260 90C320 70 380 150 440 250L440 330L60 330Z" fill="url(#h1g)"></path>
+<path clip-path="url(#h1c)" d="M60 300C140 270 200 110 260 90C320 70 380 150 440 250" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"></path>
+<circle class="h1h" r="12" style="offset-path:path('M60 300C140 270 200 110 260 90C320 70 380 150 440 250')"></circle>
+<circle class="h1d" r="5" style="offset-path:path('M60 300C140 270 200 110 260 90C320 70 380 150 440 250')"></circle>
+<g class="h1o"><line x1="260" y1="90" x2="260" y2="330" stroke="var(--accent)" stroke-opacity=".5" stroke-dasharray="4 5"></line><circle cx="260" cy="90" r="6" fill="var(--accent)"></circle><circle cx="260" cy="90" r="14" fill="none" stroke="var(--accent)" stroke-opacity=".4"></circle><text class="t-a" x="260" y="58">Punto óptimo</text></g>
+</svg></sc-if>
+<sc-if value="{{p2}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<defs><pattern id="h2p" width="28" height="28" patternUnits="userSpaceOnUse" x="46" y="46"><circle cx="14" cy="14" r="2" fill="#9BA7B0"></circle></pattern></defs>
+<rect class="h2base" x="46" y="46" width="420" height="308" fill="url(#h2p)"></rect>
+<circle class="h2g" cx="116" cy="88" r="3" style="animation-delay:0s"></circle>
+<circle class="h2g" cx="200" cy="116" r="3" style="animation-delay:-.8s"></circle>
+<circle class="h2g" cx="284" cy="88" r="3" style="animation-delay:-1.6s"></circle>
+<circle class="h2g" cx="368" cy="144" r="3" style="animation-delay:-2.4s"></circle>
+<circle class="h2g" cx="144" cy="200" r="3" style="animation-delay:-3.2s"></circle>
+<circle class="h2g" cx="256" cy="200" r="3" style="animation-delay:-4s"></circle>
+<circle class="h2g" cx="340" cy="228" r="3" style="animation-delay:-4.8s"></circle>
+<circle class="h2g" cx="424" cy="116" r="3" style="animation-delay:-5.4s"></circle>
+<circle class="h2g" cx="88" cy="284" r="3" style="animation-delay:-1.2s"></circle>
+<circle class="h2g" cx="228" cy="312" r="3" style="animation-delay:-2.8s"></circle>
+<circle class="h2m" cx="172" cy="144" r="3" style="animation-delay:-.4s"></circle>
+<circle class="h2m" cx="312" cy="172" r="3" style="animation-delay:-1.2s"></circle>
+<circle class="h2m" cx="396" cy="200" r="3" style="animation-delay:-2s"></circle>
+<circle class="h2m" cx="116" cy="228" r="3" style="animation-delay:-2.8s"></circle>
+<circle class="h2m" cx="200" cy="284" r="3" style="animation-delay:-3.6s"></circle>
+<circle class="h2m" cx="284" cy="284" r="3" style="animation-delay:-4.4s"></circle>
+<circle class="h2m" cx="368" cy="312" r="3" style="animation-delay:-5s"></circle>
+<circle class="h2m" cx="452" cy="256" r="3" style="animation-delay:-.2s"></circle>
+<circle class="h2m" cx="60" cy="144" r="3" style="animation-delay:-3s"></circle>
+<circle class="h2m" cx="256" cy="116" r="3" style="animation-delay:-5.6s"></circle>
+<circle cx="60" cy="380" r="4" fill="var(--accent)"></circle><text class="t-m" x="72" y="384" style="text-anchor:start">Aumento</text>
+<circle cx="150" cy="380" r="4" fill="#F5B84B"></circle><text class="t-m" x="162" y="384" style="text-anchor:start">Recorte</text>
+</svg></sc-if>
+<sc-if value="{{p3}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<g class="h3ch"><rect x="60" y="80" width="80" height="38" rx="19"></rect><text x="100" y="104">SMS</text></g>
+<g class="h3ch h3w"><rect x="150" y="80" width="80" height="38" rx="19"></rect><text x="190" y="104">WhatsApp</text></g>
+<g class="h3ch h3c"><rect x="240" y="80" width="80" height="38" rx="19"></rect><text x="280" y="104">Llamada</text></g>
+<g class="h3ch"><rect x="330" y="80" width="80" height="38" rx="19"></rect><text x="370" y="104">Email</text></g>
+<line class="h3l1" x1="190" y1="122" x2="190" y2="250" stroke="var(--accent)" stroke-dasharray="4 5"></line>
+<line class="h3l2" x1="280" y1="122" x2="370" y2="250" stroke="var(--accent)" stroke-dasharray="4 5"></line>
+<path d="M60 250H440" stroke="var(--line)" stroke-width="2"></path>
+<circle cx="60" cy="250" r="5" fill="var(--line)"></circle>
+<circle cx="190" cy="250" r="5" fill="var(--line)"></circle>
+<circle cx="370" cy="250" r="5" fill="var(--line)"></circle>
+<text class="t-m" x="60" y="282">Vence</text>
+<text class="t-m" x="190" y="282">+1 día</text>
+<text class="t-m" x="370" y="282">+5 días</text>
+<circle class="h3d" r="7" style="offset-path:path('M60 250H440')"></circle>
+<g class="h3p"><circle cx="440" cy="250" r="22" fill="none" stroke="var(--accent)" stroke-opacity=".5"></circle><circle cx="440" cy="250" r="14" fill="var(--accent)"></circle><path d="M434 250l4 4 8-9" fill="none" stroke="#04130F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path><text class="t-a" x="440" y="296">Pago recibido</text></g>
+</svg></sc-if>
+<sc-if value="{{p4}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<path class="h4a" d="M250 60V340M50 200H450" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="4 6" fill="none"></path>
+<text class="t-a h4a" x="365" y="52">Persuadibles</text>
+<text class="t-m h4a" x="135" y="52">Compradores seguros</text>
+<text class="t-m h4a" x="135" y="364">Casos perdidos</text>
+<text class="t-m h4a" x="365" y="364">No molestar</text>
+<circle class="h4q1" cx="320" cy="100" r="6" style="--sx:-94px;--sy:116px"></circle>
+<circle class="h4q1" cx="360" cy="90" r="6" style="--sx:-92px;--sy:88px"></circle>
+<circle class="h4q1" cx="410" cy="110" r="6" style="--sx:-170px;--sy:116px"></circle>
+<circle class="h4q1" cx="330" cy="150" r="6" style="--sx:-54px;--sy:60px"></circle>
+<circle class="h4q1" cx="380" cy="140" r="6" style="--sx:-158px;--sy:48px"></circle>
+<circle class="h4q1" cx="420" cy="160" r="6" style="--sx:-158px;--sy:64px"></circle>
+<circle class="h4q2" cx="80" cy="110" r="6" style="--sx:146px;--sy:106px"></circle>
+<circle class="h4q2" cx="130" cy="90" r="6" style="--sx:138px;--sy:88px"></circle>
+<circle class="h4q2" cx="180" cy="100" r="6" style="--sx:60px;--sy:126px"></circle>
+<circle class="h4q2" cx="100" cy="150" r="6" style="--sx:176px;--sy:60px"></circle>
+<circle class="h4q2" cx="150" cy="140" r="6" style="--sx:72px;--sy:48px"></circle>
+<circle class="h4q2" cx="190" cy="160" r="6" style="--sx:72px;--sy:64px"></circle>
+<circle class="h4q3" cx="80" cy="260" r="6" style="--sx:146px;--sy:-44px"></circle>
+<circle class="h4q3" cx="130" cy="250" r="6" style="--sx:138px;--sy:-72px"></circle>
+<circle class="h4q3" cx="180" cy="270" r="6" style="--sx:60px;--sy:-44px"></circle>
+<circle class="h4q3" cx="100" cy="310" r="6" style="--sx:176px;--sy:-100px"></circle>
+<circle class="h4q3" cx="150" cy="300" r="6" style="--sx:72px;--sy:-112px"></circle>
+<circle class="h4q3" cx="190" cy="320" r="6" style="--sx:72px;--sy:-96px"></circle>
+<circle class="h4q4" cx="320" cy="260" r="6" style="--sx:-94px;--sy:-44px"></circle>
+<circle class="h4q4" cx="360" cy="250" r="6" style="--sx:-92px;--sy:-72px"></circle>
+<circle class="h4q4" cx="410" cy="270" r="6" style="--sx:-170px;--sy:-44px"></circle>
+<circle class="h4q4" cx="330" cy="310" r="6" style="--sx:-54px;--sy:-100px"></circle>
+<circle class="h4q4" cx="380" cy="300" r="6" style="--sx:-158px;--sy:-112px"></circle>
+<circle class="h4q4" cx="420" cy="320" r="6" style="--sx:-158px;--sy:-96px"></circle>
+</svg></sc-if>
+<sc-if value="{{p5}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<rect x="90" y="70" width="320" height="190" rx="16" fill="#10151A" stroke="var(--line)" stroke-width="1.5"></rect>
+<rect x="110" y="100" width="72" height="88" rx="10" fill="#161C22" stroke="var(--line)"></rect>
+<circle cx="146" cy="130" r="15" fill="#232C34"></circle>
+<path d="M122 182c3-18 13-26 24-26s21 8 24 26z" fill="#232C34"></path>
+<text class="t-m" x="200" y="108" style="text-anchor:start">Nombre</text>
+<rect class="h5b" x="200" y="114" width="150" height="10" rx="5"></rect>
+<text class="t-m" x="200" y="148" style="text-anchor:start">Fecha de nacimiento</text>
+<rect class="h5b" x="200" y="154" width="110" height="10" rx="5" style="animation-delay:.2s"></rect>
+<text class="t-m" x="200" y="188" style="text-anchor:start">Número de documento</text>
+<rect class="h5b" x="200" y="194" width="130" height="10" rx="5" style="animation-delay:.4s"></rect>
+<g class="h5k" style="animation-delay:0s"><circle cx="384" cy="119" r="9" fill="var(--accent)"></circle><path d="M380 119l3 3 5-6" fill="none" stroke="#04130F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></g>
+<g class="h5k" style="animation-delay:.5s"><circle cx="384" cy="159" r="9" fill="var(--accent)"></circle><path d="M380 159l3 3 5-6" fill="none" stroke="#04130F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></g>
+<g class="h5k" style="animation-delay:1s"><circle cx="384" cy="199" r="9" fill="var(--accent)"></circle><path d="M380 199l3 3 5-6" fill="none" stroke="#04130F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></g>
+<rect class="h5s" x="90" y="70" width="320" height="3" rx="1.5" fill="var(--accent)" style="filter:drop-shadow(0 0 8px var(--accent))"></rect>
+<g class="h5v"><rect x="160" y="290" width="180" height="34" rx="17" fill="var(--bg)" stroke="var(--accent)" stroke-opacity=".6"></rect><text class="t-a" x="250" y="312">Identidad verificada</text></g>
+</svg></sc-if>
+<sc-if value="{{p6}}" hint-placeholder-val="{{ false }}"><svg class="sc" viewBox="0 0 500 400" aria-hidden="true">
+<path d="M90 340V60" stroke="var(--line)" stroke-width="2" stroke-dasharray="3 7" fill="none"></path>
+<circle class="h6p" r="4" style="offset-path:path('M90 340V60');animation-delay:0s"></circle>
+<circle class="h6p" r="4" style="offset-path:path('M90 340V60');animation-delay:1.1s"></circle>
+<circle class="h6p" r="4" style="offset-path:path('M90 340V60');animation-delay:2.2s"></circle>
+<g class="h6b" style="animation-delay:0s"><rect x="130" y="298" width="280" height="44" rx="12"></rect><text x="270" y="325">Feature store</text></g>
+<g class="h6b" style="animation-delay:.7s"><rect x="130" y="244" width="280" height="44" rx="12"></rect><text x="270" y="271">Entrenamiento</text></g>
+<g class="h6b" style="animation-delay:1.4s"><rect x="130" y="190" width="280" height="44" rx="12"></rect><text x="270" y="217">Registro de modelos</text></g>
+<g class="h6b" style="animation-delay:2.1s"><rect x="130" y="136" width="280" height="44" rx="12"></rect><text x="270" y="163">Serving</text></g>
+<g class="h6b" style="animation-delay:2.8s"><rect x="130" y="82" width="280" height="44" rx="12" style="fill:#11332D"></rect><text x="270" y="109">Monitoreo de drift</text></g>
+</svg></sc-if>
+</div>
+</div>
+</div>
+</section>
+
+<section class="pv-sec" aria-label="El problema">
+<div class="wrap">
+<p class="eyebrow" data-rv2="">El problema</p>
+<p class="stmt" data-rv2="" style="--d:.08s">{{P.problem}}</p>
+</div>
+</section>
+
+<section class="pv-sec" aria-label="Cómo funciona">
+<div class="wrap">
+<p class="eyebrow" data-rv2="">Cómo funciona</p>
+<h2 class="h2" data-rv2="" style="--d:.08s">Del dato a la decisión.</h2>
+<div class="flow" data-rv2="">
+<div class="fl"><i></i><b></b></div>
+<sc-for list="{{P.steps}}" as="s" hint-placeholder-count="4">
+<div class="step">
+<div class="node"><span class="hd" style="font-size:20px;font-weight:600">{{s.n}}</span></div>
+<div><h3>{{s.t}}</h3><p>{{s.x}}</p></div>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section class="pv-sec" aria-label="Capacidades">
+<div class="wrap">
+<p class="eyebrow" data-rv2="">Capacidades</p>
+<h2 class="h2" data-rv2="" style="--d:.08s">Lo que incluye.</h2>
+<div class="caps">
+<sc-for list="{{P.caps}}" as="c" hint-placeholder-count="6">
+<div class="cw" data-rv2="">
+<div class="card mini">
+<div class="ico"><svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="{{c.href}}"></use></svg></div>
+<h3>{{c.t}}</h3>
+<p>{{c.d}}</p>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section class="pv-sec pv-demo" aria-label="Demo interactiva">
+<div class="wrap">
+<p class="eyebrow" data-rv2="">Demo interactiva</p>
+<h2 class="h2" data-rv2="" style="--d:.08s">Pruébalo tú mismo.</h2>
+<div class="demo" data-rv2="">
+<span class="badge"><svg class="ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-flask"></use></svg>Datos de demostración</span>
+<div style="margin-top:24px">
+<sc-if value="{{p0}}" hint-placeholder-val="{{ false }}"><div class="dm">
+<div>
+<div class="ctl"><div class="ctl-h"><label for="o-inc">Ingreso mensual</label><b>{{o_incT}}</b></div><input id="o-inc" type="range" min="5000" max="40000" step="500" value="{{o_inc}}" onChange="{{o_incH}}"></div>
+<div class="ctl"><div class="ctl-h"><label for="o-mon">Antigüedad en la app</label><b>{{o_monT}}</b></div><input id="o-mon" type="range" min="0" max="36" step="1" value="{{o_mon}}" onChange="{{o_monH}}"></div>
+<div class="ctl"><div class="ctl-h"><label for="o-late">Pagos atrasados en buró</label><b>{{o_late}}</b></div><input id="o-late" type="range" min="0" max="5" step="1" value="{{o_late}}" onChange="{{o_lateH}}"></div>
+<button type="button" class="tog" aria-pressed="{{o_devP}}" onClick="{{o_devH}}"><span class="tg"></span>{{o_devL}}</button>
+</div>
+<div class="out">
+<svg class="gg" viewBox="0 0 200 120" role="img" aria-label="Medidor de score del solicitante ficticio"><path d="M20 100A80 80 0 0 1 180 100" fill="none" stroke="var(--line)" stroke-width="12" stroke-linecap="round"></path><path class="v" d="M20 100A80 80 0 0 1 180 100" style="stroke-dashoffset:{{o_off}}"></path><text class="t-s" x="100" y="94" style="font-size:38px">{{o_score}}</text></svg>
+<span class="dec {{o_decCls}}">{{o_dec}}</span>
+<ul class="rs"><sc-for list="{{o_reasons}}" as="r" hint-placeholder-count="3"><li><span>{{r.txt}}</span><b class="{{r.cls}}">{{r.sg}}</b></li></sc-for></ul>
+</div>
+</div></sc-if>
+<sc-if value="{{p1}}" hint-placeholder-val="{{ false }}"><div class="dm">
+<div>
+<div class="ctl"><div class="ctl-h"><label for="l-a">Apetito de riesgo</label><b>{{l_aT}}</b></div><input id="l-a" type="range" min="0" max="100" step="1" value="{{l_a}}" onChange="{{l_aH}}"></div>
+<div class="kpis">
+<div class="kpi"><span>Volumen colocado</span><b>{{l_vol}}</b></div>
+<div class="kpi"><span>Pérdida esperada</span><b>{{l_loss}}</b></div>
+<div class="kpi"><span>Ganancia esperada</span><b>{{l_prof}}</b></div>
+</div>
+</div>
+<div class="out">
+<svg viewBox="0 0 360 200" style="width:100%;max-width:420px;height:auto" role="img" aria-label="Curva de ganancia esperada según el apetito de riesgo">
+<path d="M20 180H350M20 180V20" fill="none" stroke="var(--line)" stroke-width="1.5"></path>
+<polyline points="{{l_pts}}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+<line x1="{{l_ox}}" y1="20" x2="{{l_ox}}" y2="180" stroke="var(--accent)" stroke-opacity=".45" stroke-dasharray="4 5"></line>
+<circle cx="{{l_cx}}" cy="{{l_cy}}" r="14" fill="none" stroke="var(--accent)" stroke-opacity=".4"></circle>
+<circle cx="{{l_cx}}" cy="{{l_cy}}" r="6" fill="var(--accent)"></circle>
+</svg>
+<p class="note">{{l_opt}}</p>
+</div>
+</div></sc-if>
+<sc-if value="{{p2}}" hint-placeholder-val="{{ false }}"><div>
+<div class="ctl"><div class="ctl-h"><label for="p-w">Avanza el tiempo</label><b>{{p_wT}}</b></div><input id="p-w" type="range" min="0" max="8" step="1" value="{{p_w}}" onChange="{{p_wH}}"></div>
+<div class="urows">
+<sc-for list="{{p_users}}" as="u" hint-placeholder-count="5">
+<div class="urow"><span>{{u.n}}</span><div class="ubar"><i style="width:{{u.w}}"></i></div><b class="ul">{{u.l}}</b><span class="chip {{u.cls}}">{{u.st}}</span></div>
+</sc-for>
+</div>
+</div></sc-if>
+<sc-if value="{{p3}}" hint-placeholder-val="{{ false }}"><div class="dm">
+<div>
+<p style="font-size:14px;color:var(--mu);margin-bottom:12px">Elige un perfil de deudor ficticio</p>
+<div class="seg" role="group" aria-label="Perfil de deudor">
+<sc-for list="{{c_btns}}" as="b" hint-placeholder-count="3"><button type="button" class="sgb" aria-pressed="{{b.on}}" onClick="{{b.h}}">{{b.t}}</button></sc-for>
+</div>
+<div class="bars">
+<div><div class="bl"><span>Probabilidad de pago estimada</span><b>{{c_lvl}}</b></div><div class="bt"><i class="ac" style="width:{{c_pw}}"></i></div></div>
+</div>
+</div>
+<div>
+<p style="font-size:14px;color:var(--mu);margin-bottom:12px">Estrategia de contacto diseñada</p>
+<div class="acts">
+<sc-for list="{{c_acts}}" as="a" hint-placeholder-count="3"><div class="act"><b>{{a.d}}</b><span class="chip up">{{a.ch}}</span><span>{{a.of}}<small>Tono: {{a.tone}}</small></span></div></sc-for>
+</div>
+</div>
+</div></sc-if>
+<sc-if value="{{p4}}" hint-placeholder-val="{{ false }}"><div class="dm">
+<div>
+<div class="ctl"><div class="ctl-h"><label for="a-s">Presupuesto hacia persuadibles</label><b>{{a_sT}}</b></div><input id="a-s" type="range" min="0" max="100" step="1" value="{{a_s}}" onChange="{{a_sH}}"></div>
+<ul class="rs" style="max-width:none">
+<li><span>Persuadibles</span><b class="sp">{{a_sh0}}</b></li>
+<li><span>Compradores seguros</span><b>{{a_sh1}}</b></li>
+<li><span>Casos perdidos</span><b>{{a_sh2}}</b></li>
+<li><span>No molestar</span><b class="sn">Siempre excluidos</b></li>
+</ul>
+</div>
+<div class="bars">
+<div><div class="bl"><span>Campaña masiva (reparto proporcional)</span><b>100</b></div><div class="bt"><i style="width:{{a_mw}}"></i></div></div>
+<div><div class="bl"><span>Tu reparto</span><b>{{a_idx}}</b></div><div class="bt"><i class="ac" style="width:{{a_yw}}"></i></div></div>
+<p class="note" style="text-align:left">Conversiones incrementales, índice sobre la campaña masiva. Con más presupuesto en un solo segmento los retornos empiezan a bajar.</p>
+</div>
+</div></sc-if>
+<sc-if value="{{p5}}" hint-placeholder-val="{{ false }}"><div class="dm">
+<div>
+<p style="font-size:14px;color:var(--mu);margin-bottom:12px">Pregúntale al agente como si fueras un usuario</p>
+<div class="qs">
+<sc-for list="{{g_btns}}" as="b" hint-placeholder-count="3"><button type="button" class="sgb" onClick="{{b.h}}">{{b.t}}</button></sc-for>
+<button type="button" class="sgb" onClick="{{g_reset}}" style="border-style:dashed">Reiniciar conversación</button>
+</div>
+</div>
+<div class="chat" role="log" aria-live="polite" aria-label="Conversación de demostración">
+<sc-for list="{{g_msgs}}" as="m" hint-placeholder-count="1">
+<div class="bub {{m.cls}}">{{m.txt}}<div class="acts2"><sc-for list="{{m.acts}}" as="x" hint-placeholder-count="0"><span class="tag">{{x.t}}</span></sc-for></div></div>
+</sc-for>
+<sc-if value="{{g_typing}}" hint-placeholder-val="{{ false }}"><div class="typing"><i></i><i></i><i></i></div></sc-if>
+</div>
+</div></sc-if>
+<sc-if value="{{p6}}" hint-placeholder-val="{{ false }}"><div>
+<p style="font-size:14px;color:var(--mu);margin-bottom:12px">Elige un nivel de madurez</p>
+<div class="seg" role="group" aria-label="Nivel de madurez">
+<sc-for list="{{f_btns}}" as="b" hint-placeholder-count="4"><button type="button" class="sgb" aria-pressed="{{b.on}}" onClick="{{b.h}}">{{b.t}}</button></sc-for>
+</div>
+<p style="font-size:16px;margin-bottom:16px">{{f_desc}}</p>
+<div class="comps">
+<sc-for list="{{f_comps}}" as="c" hint-placeholder-count="8">
+<div class="comp {{c.cls}}"><svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{c.t}}</div>
+</sc-for>
+</div>
+</div></sc-if>
+</div>
+</div>
+</div>
+</section>
+
+<section class="pv-sec" aria-label="Métricas">
+<div class="wrap">
+<p class="eyebrow" data-rv2="">Qué métricas mueve</p>
+<h2 class="h2" data-rv2="" style="--d:.08s">Métricas de negocio, medidas contigo.</h2>
+<div class="mets">
+<sc-for list="{{P.mets}}" as="m" hint-placeholder-count="5">
+<span class="met" data-rv2="">{{m.t}}</span>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section class="pv-sec" aria-label="Integración">
+<div class="wrap">
+<p class="eyebrow" data-rv2="">Integración</p>
+<h2 class="h2" data-rv2="" style="--d:.08s">Una llamada a la API.</h2>
+<div class="codes" data-rv2="">
+<div class="code"><div class="code-h"><span>Request</span><span>{{P.endpoint}}</span></div><pre>{{P.req}}</pre></div>
+<div class="code"><div class="code-h"><span>Response</span><span>Ejemplo ilustrativo</span></div><pre>{{P.res}}</pre></div>
+</div>
+</div>
+</section>
+
+<section class="pv-sec" aria-label="Cierre">
+<div class="wrap" data-rv2="" style="display:flex;flex-wrap:wrap;gap:24px 32px;align-items:center;justify-content:space-between">
+<h2 class="h2">Llévalo a producción con tus datos.</h2>
+<div style="display:flex;flex-wrap:wrap;gap:12px">
+<button type="button" class="btn" onClick="{{ctaGo}}">{{ctaLabel}}
+<svg class="ic" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow-r"></use></svg>
+</button>
+<button type="button" class="pbtn" onClick="{{close}}">Volver al catálogo</button>
+</div>
+</div>
+</section>
+
+</div>
+</div>
+
+<footer class="foot">
+<div class="wrap foot-in">
+<a class="logo" href="#top" style="font-size:16px">
+<svg class="ic" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 19L9 7l4 7 3-4.5L21.5 19"></path></svg>
+Sora Valley
+</a>
+<span>Machine learning y decisioning para fintechs de Latinoamérica.</span>
+<span>© 2026 Sora Valley</span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#4FE3C1","options":["#4FE3C1","#7DD3FC","#FBBF24","#A3E635"]},"$preview":{"width":1440,"height":6800}}'>
+class Component extends DCLogic {
+componentDidMount() {
+try {
+const root = document.querySelector('.sv-root');
+if (!root || !('IntersectionObserver' in window)) return;
+if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+root.classList.add('rv-on');
+const io = new IntersectionObserver((entries) => {
+entries.forEach((e) => {
+if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+});
+}, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+root.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+} catch (err) {}
+}
+products() {
+if (this._P) return this._P;
+const C = (i, t, d) => ({ href: '#i-' + i, t: t, d: d });
+const S = (n, t, x) => ({ n: n, t: t, x: x });
+const M = (a) => a.map((t) => ({ t: t }));
+this._P = [
+{ name: 'Sora Origin', short: 'Originación', stages: [0, 1, 0, 0, 0],
+promise: 'Decide en milisegundos a quién darle crédito, incluso a quien el buró no ve.',
+problem: 'Sin un modelo propio, apruebas a ciegas o rechazas a buenos clientes que el buró no ve.',
+steps: [S(1, 'Llega la solicitud', 'Un usuario pide crédito en tu app.'), S(2, 'Se encienden las señales', 'Buró y datos alternativos, en un solo paso.'), S(3, 'El modelo puntúa', 'Riesgo y fraude evaluados en tiempo real.'), S(4, 'Decide y explica', 'Aprobación o rechazo con sus razones.')],
+caps: [C('bolt', 'Tiempo real', 'Score en menos de 300 ms por decisión.'), C('layers', 'Más allá del buró', 'Dispositivo, comportamiento en la app y datos transaccionales autorizados.'), C('shield', 'Fraude integrado', 'Identidades sintéticas, fraude de primera parte y redes de solicitudes.'), C('refresh', 'Arranque en frío', 'Modelo base desde el día 1; se recalibra con cada cosecha.'), C('eye', 'Decisiones explicables', 'Razones por cada aprobación o rechazo, listas para auditoría.'), C('flask', 'Champion/challenger', 'Un modelo nuevo compite en producción antes de reemplazar al actual.')],
+mets: M(['Tasa de aprobación', 'Mora temprana', 'Pérdida esperada', 'Fraude de primera parte', 'Tiempo de decisión']),
+endpoint: 'POST /v1/origin/decisions',
+req: '{\n  "applicant_id": "app_8f21",\n  "channel": "app",\n  "bureau_ref": "bur_2291",\n  "signals": {\n    "device_id": "dev_41c9",\n    "app_sessions_30d": 18,\n    "consented_transactions": true\n  }\n}',
+res: '{\n  "decision": "approved",\n  "score": 712,\n  "fraud_flags": [],\n  "reasons": [\n    "Historial de pagos sin atrasos",\n    "Dispositivo verificado",\n    "Actividad reciente en la app"\n  ],\n  "model_version": "origin-2026.11"\n}' },
+{ name: 'Sora Limit', short: 'Asignación de línea', stages: [0, 0, 1, 0, 0],
+promise: 'No le prestes lo mismo a todos. Préstale a cada uno lo que maximiza tu ganancia.',
+problem: 'Una línea igual para todos deja dinero sobre la mesa o te llena de pérdidas.',
+steps: [S(1, 'Estimamos por usuario', 'Riesgo y ganancia esperada de cada línea posible.'), S(2, 'Aplicamos tus límites', 'Fondeo, pérdida máxima y políticas internas.'), S(3, 'Optimizamos', 'La línea que maximiza la ganancia, no solo el riesgo.'), S(4, 'Eliges tu punto', 'Tu comité decide en la frontera de crecimiento y pérdida.')],
+caps: [C('coin', 'Ganancia esperada', 'Optimiza la línea inicial por ganancia, no solo por riesgo.'), C('scales', 'Restricciones reales', 'Fondeo disponible, pérdida máxima tolerada y políticas internas.'), C('flask', 'Simulador de escenarios', '¿Qué pasa con tu cartera si subes la línea promedio un 10%?'), C('trend', 'Frontera eficiente', 'Tu comité elige su punto entre crecimiento y pérdida.')],
+mets: M(['Ganancia por usuario', 'Pérdida esperada', 'Volumen colocado', 'Utilización de línea', 'Uso del fondeo']),
+endpoint: 'POST /v1/limit/assignments',
+req: '{\n  "applicant_id": "app_8f21",\n  "risk_appetite": "moderate",\n  "constraints": {\n    "max_expected_loss_pct": 4.0,\n    "funding_available": true\n  }\n}',
+res: '{\n  "recommended_line": 7500,\n  "currency": "MXN",\n  "expected_profit_band": "medium",\n  "binding_constraint": "none",\n  "model_version": "limit-2026.11"\n}' },
+{ name: 'Sora Pulse', short: 'Gestión de línea', stages: [0, 0, 0, 1, 0],
+promise: 'Tu cartera, re-evaluada todos los días.',
+problem: 'Una línea que se fija el día 1 envejece: el riesgo cambia cada semana y tu política no.',
+steps: [S(1, 'Observamos', 'Pagos y uso de cada usuario, todos los días.'), S(2, 'Detectamos señales', 'Alertas antes de que aparezca la mora.'), S(3, 'Probamos con método', 'Experimentos causales para cada aumento.'), S(4, 'Ajustamos y registramos', 'Cada cambio de línea queda versionado.')],
+caps: [C('history', 'Re-evaluación continua', 'Cada usuario, según su comportamiento de pago y de uso.'), C('flask', 'Aumentos causales', 'Solo sube a quien realmente va a usar más y pagar.'), C('alert', 'Alertas tempranas', 'Recorta o congela antes de la mora, no después.'), C('file', 'Todo versionado', 'Reglas y modelos con historial de cada cambio de línea.')],
+mets: M(['Utilización de línea', 'Mora a 30 días', 'Rentabilidad de la cartera', 'Reactivación de usuarios', 'Roll rate']),
+endpoint: 'POST /v1/pulse/evaluations',
+req: '{\n  "account_id": "acc_5530",\n  "window_days": 7\n}',
+res: '{\n  "action": "increase",\n  "current_line": 7500,\n  "new_line": 9000,\n  "reasons": [\n    "Uso creciente de la línea",\n    "Pagos puntuales recientes"\n  ],\n  "experiment_group": "treatment"\n}' },
+{ name: 'Sora Collect', short: 'Cobranza inteligente', stages: [0, 0, 0, 0, 1],
+promise: 'Cobra más, molestando menos.',
+problem: 'Cobrar a todos igual cansa a quien iba a pagar y llega tarde a quien no.',
+steps: [S(1, 'Predecimos el pago', 'Probabilidad de pago de cada usuario, cada día.'), S(2, 'Elegimos la acción', 'A quién, cuándo, canal, tono y oferta.'), S(3, 'Ejecutamos', 'Por canal automático o con agentes de IA.'), S(4, 'Aprendemos', 'Cada respuesta mejora la siguiente estrategia.')],
+caps: [C('calendar', 'Probabilidad de pago', 'Para cada usuario y cada día del ciclo.'), C('target', 'Siguiente mejor acción', 'A quién, cuándo, canal, tono y oferta: recordatorio, plan de pagos o reestructuración.'), C('bot', 'Agentes de cobranza', 'WhatsApp y voz, con escalamiento a humanos.'), C('refresh', 'Aprendizaje continuo', 'Cada interacción regresa a Sora Core.')],
+mets: M(['Tasa de recuperación', 'Roll rate', 'Contactabilidad', 'Costo por peso recuperado', 'Promesas de pago cumplidas']),
+endpoint: 'POST /v1/collect/next-action',
+req: '{\n  "account_id": "acc_5530",\n  "days_past_due": 3\n}',
+res: '{\n  "channel": "whatsapp",\n  "send_at": "2026-11-14T18:00:00-06:00",\n  "tone": "amable",\n  "offer": "reminder",\n  "pay_probability": 0.72\n}' },
+{ name: 'Sora Audience', short: 'Segmentación y campañas', stages: [1, 0, 0, 1, 0],
+promise: 'Deja de regalar incentivos a quien igual iba a comprar.',
+problem: 'Un incentivo masivo se lo regalas a quien igual iba a comprar.',
+steps: [S(1, 'Medimos el uplift', 'A quién le cambia el comportamiento un incentivo.'), S(2, 'Segmentamos', 'Cuatro grupos claros de usuarios.'), S(3, 'Probamos en vivo', 'Bandits eligen incentivo, monto y canal.'), S(4, 'Optimizamos el presupuesto', 'Cada peso va a donde sí mueve la aguja.')],
+caps: [C('trend', 'Modelos de uplift', 'Identifican a quién cambia su comportamiento gracias al incentivo.'), C('circles', 'Cuatro segmentos', 'Persuadibles, compradores seguros, casos perdidos y no molestar.'), C('split', 'Bandits multi-brazo', 'Optimizan en vivo qué incentivo, monto y canal funciona mejor.'), C('coin', 'Presupuesto optimizado', 'Reparte el presupuesto de incentivos de toda la campaña.')],
+mets: M(['Costo de incentivo por conversión', 'Activación', 'Ingreso incremental', 'Retorno de las campañas']),
+endpoint: 'POST /v1/audience/segments',
+req: '{\n  "campaign_id": "cmp_0312",\n  "user_ids": ["usr_101", "usr_102", "usr_103"],\n  "budget": 50000\n}',
+res: '{\n  "segments": {\n    "persuadable": ["usr_101"],\n    "sure_thing": ["usr_102"],\n    "lost_cause": [],\n    "do_not_disturb": ["usr_103"]\n  },\n  "recommended_incentive": {\n    "type": "cashback",\n    "amount": 50\n  }\n}' },
+{ name: 'Sora Agents', short: 'Agentes de IA', stages: [1, 1, 0, 0, 0],
+promise: 'Un equipo de operaciones que nunca duerme.',
+problem: 'Cada documento y cada consulta revisada a mano frena tu crecimiento y encarece tu operación.',
+steps: [S(1, 'Recibe el caso', 'Un documento, una conversación o una solicitud.'), S(2, 'Lee y valida', 'Extrae datos y los contrasta uno por uno.'), S(3, 'Actúa', 'Resuelve con acceso seguro a tus sistemas.'), S(4, 'Escala si hace falta', 'Pasa a una persona con todo el contexto.')],
+caps: [C('scan', 'KYC en minutos', 'Lectura de documentos, selfie, prueba de vida y validaciones automáticas.'), C('chat', 'Atención 24/7', 'Con acceso seguro a la cuenta del usuario.'), C('eye', 'Copiloto de riesgo', 'Explica en lenguaje natural por qué el modelo decidió así.'), C('route', 'Workflows configurables', 'Con monitoreo y trazabilidad de cada acción.')],
+mets: M(['Tiempo de KYC', 'Conversión del onboarding', 'Costo de atención', 'Tiempo de primera respuesta', 'Casos escalados a humanos']),
+endpoint: 'POST /v1/agents/kyc/sessions',
+req: '{\n  "applicant_id": "app_8f21",\n  "document_type": "official_id",\n  "selfie_ref": "img_77a0"\n}',
+res: '{\n  "status": "verified",\n  "extracted": {\n    "full_name": "Persona de Ejemplo",\n    "document_valid": true\n  },\n  "liveness": "passed",\n  "trace_id": "trc_90b1"\n}' },
+{ name: 'Sora Forge', short: 'MLOps en tu casa', stages: [1, 1, 1, 1, 1],
+promise: 'De notebook a producción en días, no en trimestres.',
+problem: 'Sin plataforma, cada modelo se queda en un notebook y nunca llega a producción.',
+steps: [S(1, 'Diagnosticamos', 'Dónde estás hoy en madurez de MLOps.'), S(2, 'Montamos la plataforma', 'En tu nube: feature store, entrenamiento y serving.'), S(3, 'Producción', 'Tus modelos desplegados y monitoreados.'), S(4, 'Transferimos', 'Tu equipo queda operando con autonomía.')],
+caps: [C('cloud', 'En tu nube', 'Feature store, entrenamiento, registro de modelos, serving y monitoreo de drift.'), C('layers', 'Niveles de madurez', 'De manual a pipelines, CI/CD de modelos y agentes en producción.'), C('cube', 'Agnóstica a la nube', 'GCP, AWS u otras.'), C('book', 'Transferencia de conocimiento', 'Tu equipo queda operando la plataforma.')],
+mets: M(['Tiempo a producción', 'Frecuencia de despliegue', 'Detección de drift', 'Tiempo de reentrenamiento']),
+endpoint: 'POST /v1/forge/deployments',
+req: '{\n  "model": "origin",\n  "stage": "production",\n  "cloud": "gcp"\n}',
+res: '{\n  "deployment_id": "dep_2044",\n  "status": "serving",\n  "monitoring": {\n    "drift": "enabled",\n    "alerts": true\n  }\n}' }
+];
+return this._P;
+}
+openP(i, e) {
+const ov = document.querySelector('.pv');
+if (!ov) return;
+const t = e && e.currentTarget ? e.currentTarget : null;
+const r = t ? t.getBoundingClientRect() : { top: 0, left: 0, right: 0, bottom: 0 };
+const W = window.innerWidth, H = window.innerHeight;
+ov.style.transition = 'none';
+ov.style.clipPath = 'inset(' + r.top + 'px ' + (W - r.right) + 'px ' + (H - r.bottom) + 'px ' + r.left + 'px round 16px)';
+ov.scrollTop = 0;
+this.setState({ view: i });
+ov.classList.add('open');
+ov.setAttribute('aria-hidden', 'false');
+document.documentElement.style.overflow = 'hidden';
+void ov.offsetHeight;
+requestAnimationFrame(() => {
+ov.style.transition = 'clip-path .75s cubic-bezier(.2,.8,.1,1)';
+ov.style.clipPath = 'inset(0px 0px 0px 0px round 0px)';
+});
+setTimeout(() => this.watch(), 80);
+}
+closeP() {
+const ov = document.querySelector('.pv');
+if (!ov) return;
+const v = (this.state && this.state.view) || 0;
+const hit = document.querySelector('.hit[data-pc="' + v + '"]');
+document.documentElement.style.overflow = '';
+if (hit) hit.scrollIntoView({ block: 'center', behavior: 'instant' });
+const W = window.innerWidth, H = window.innerHeight;
+const r = hit ? hit.getBoundingClientRect() : { top: H / 2, left: W / 2, right: W / 2, bottom: H / 2 };
+ov.style.transition = 'clip-path .6s cubic-bezier(.5,0,.2,1)';
+ov.style.clipPath = 'inset(' + r.top + 'px ' + (W - r.right) + 'px ' + (H - r.bottom) + 'px ' + r.left + 'px round 16px)';
+ov.setAttribute('aria-hidden', 'true');
+setTimeout(() => { ov.classList.remove('open'); }, 620);
+}
+go(d) {
+const n = this.products().length;
+const nv = (((this.state && this.state.view) || 0) + d + n) % n;
+const body = document.querySelector('.pv-body');
+if (body) body.classList.add('swap');
+setTimeout(() => {
+this.setState({ view: nv });
+const ov = document.querySelector('.pv');
+if (ov) ov.scrollTo({ top: 0, behavior: 'instant' });
+setTimeout(() => { if (body) body.classList.remove('swap'); this.watch(); }, 70);
+}, 220);
+}
+watch() {
+const ov = document.querySelector('.pv');
+const root = document.querySelector('.sv-root');
+if (!ov || !root || !root.classList.contains('rv-on')) return;
+if (this._io2) this._io2.disconnect();
+const els = ov.querySelectorAll('[data-rv2]');
+els.forEach((el) => el.classList.remove('in'));
+this._io2 = new IntersectionObserver((es) => {
+es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('in'); this._io2.unobserve(en.target); } });
+}, { root: ov, threshold: 0.15 });
+els.forEach((el) => this._io2.observe(el));
+}
+pvVals() {
+const P = this.products();
+const n = P.length;
+const v = (this.state && this.state.view) || 0;
+const p = P[v];
+const L = ['Adquirir', 'Aprobar', 'Asignar', 'Crecer', 'Cobrar'];
+const o = {
+P: p,
+counter: (v + 1) + ' / ' + n,
+prevName: P[(v + n - 1) % n].name,
+nextName: P[(v + 1) % n].name,
+ctaLabel: 'Agenda una demo de ' + p.name,
+stages: L.map((l, i) => ({ label: l, cls: p.stages[i] ? 'on' : '' })),
+close: () => this.closeP(),
+prev: () => this.go(-1),
+next: () => this.go(1),
+goDemo: () => { const d = document.querySelector('.pv-demo'); if (d) d.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+ctaGo: () => { this.closeP(); setTimeout(() => { const c = document.getElementById('contacto'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }, 700); }
+};
+for (let i = 0; i < n; i++) {
+o['p' + i] = v === i;
+o['open' + i] = (e) => this.openP(i, e);
+}
+return Object.assign(o, this.d0(), this.d1(), this.d2(), this.d3(), this.d4(), this.d5(), this.d6());
+}
+d0() {
+const s = this.state || {};
+const inc = s.o_inc ?? 18000, mon = s.o_mon ?? 12, late = s.o_late ?? 0, dev = s.o_dev ?? true;
+const c = [
+{ v: (inc - 5000) / 35000 * 160 - 60, p: 'Ingreso mensual sólido', n: 'Ingreso mensual bajo' },
+{ v: mon / 36 * 120 - 40, p: 'Buen historial en la app', n: 'Poco historial en la app' },
+{ v: -late * 75, p: 'Sin atrasos en buró', n: 'Atrasos en buró' },
+{ v: dev ? 55 : -45, p: 'Dispositivo verificado', n: 'Dispositivo no reconocido' }
+];
+const score = Math.round(Math.max(300, Math.min(900, 520 + c.reduce((a, x) => a + x.v, 0))));
+const top = c.slice().sort((a, b) => Math.abs(b.v) - Math.abs(a.v)).slice(0, 3).map((x) => ({ txt: x.v >= 0 ? x.p : x.n, sg: x.v >= 0 ? '+' : '−', cls: x.v >= 0 ? 'sp' : 'sn' }));
+const ok = score >= 580;
+return {
+o_inc: inc, o_mon: mon, o_late: late,
+o_incT: '$' + inc.toLocaleString('es-MX') + ' MXN',
+o_monT: mon + (mon === 1 ? ' mes' : ' meses'),
+o_devP: dev, o_devL: 'Dispositivo verificado: ' + (dev ? 'sí' : 'no'),
+o_score: score, o_dec: ok ? 'Aprobada' : 'Rechazada', o_decCls: ok ? 'ok' : 'no',
+o_off: (251.3 * (1 - (score - 300) / 600)).toFixed(1),
+o_reasons: top,
+o_incH: (e) => this.setState({ o_inc: +e.target.value }),
+o_monH: (e) => this.setState({ o_mon: +e.target.value }),
+o_lateH: (e) => this.setState({ o_late: +e.target.value }),
+o_devH: () => this.setState({ o_dev: !dev })
+};
+}
+d1() {
+const s = this.state || {};
+const a = s.l_a ?? 50;
+const f = (x) => { const vol = 30 + x * 0.7; const loss = 1 + Math.pow(x / 100, 2) * 7; return { vol: vol, loss: loss, prof: vol * (0.16 - loss / 100 * 1.3) }; };
+let best = 0, max = 0;
+for (let x = 0; x <= 100; x += 1) { const p = f(x).prof; if (p > max) { max = p; best = x; } }
+const X = (x) => 20 + x * 3.3;
+const Y = (p) => 180 - (p / max) * 140;
+let pts = '';
+for (let x = 0; x <= 100; x += 4) pts += X(x).toFixed(1) + ',' + Y(f(x).prof).toFixed(1) + ' ';
+const r = f(a);
+return {
+l_a: a, l_aT: a + ' / 100',
+l_vol: '$' + r.vol.toFixed(0) + ' M',
+l_loss: r.loss.toFixed(1) + '%',
+l_prof: '$' + r.prof.toFixed(1) + ' M',
+l_pts: pts.trim(), l_ox: X(best).toFixed(1), l_cx: X(a).toFixed(1), l_cy: Y(r.prof).toFixed(1),
+l_opt: 'El óptimo de esta demo está en ' + best + ': más apetito coloca más, pero la pérdida crece más rápido.',
+l_aH: (e) => this.setState({ l_a: +e.target.value })
+};
+}
+d2() {
+const s = this.state || {};
+const w = s.p_w ?? 0;
+const U = [
+{ n: 'Usuario 1', line: [5000, 5000, 5000, 6000, 6000, 6000, 6000, 7500, 7500], fz: -1 },
+{ n: 'Usuario 2', line: [8000, 8000, 8000, 8000, 6000, 6000, 4000, 4000, 4000], fz: -1 },
+{ n: 'Usuario 3', line: [3000, 3000, 3500, 3500, 3500, 4500, 4500, 4500, 5500], fz: -1 },
+{ n: 'Usuario 4', line: [6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000, 6000], fz: 5 },
+{ n: 'Usuario 5', line: [4000, 4000, 4000, 5000, 5000, 5000, 3000, 3000, 3000], fz: -1 }
+];
+return {
+p_w: w, p_wT: w === 0 ? 'Semana 0' : 'Semana ' + w,
+p_users: U.map((u) => {
+const l = u.line[w], prev = w > 0 ? u.line[w - 1] : l;
+let st = 'Estable', cls = '';
+if (l > prev) { st = 'Aumento'; cls = 'up'; }
+else if (l < prev) { st = 'Recorte'; cls = 'down'; }
+else if (u.fz >= 0 && w >= u.fz) { st = 'Congelada'; cls = 'frz'; }
+return { n: u.n, w: (l / 10000 * 100) + '%', l: '$' + l.toLocaleString('es-MX'), st: st, cls: cls };
+}),
+p_wH: (e) => this.setState({ p_w: +e.target.value })
+};
+}
+d3() {
+const s = this.state || {};
+const k = s.c_k ?? 0;
+const PR = [
+{ t: 'Olvida las fechas', lvl: 'Alta', pw: 82, acts: [{ d: 'Día 1', ch: 'WhatsApp', tone: 'Amable', of: 'Recordatorio con link de pago' }, { d: 'Día 3', ch: 'SMS', tone: 'Directo', of: 'Recordatorio de saldo' }] },
+{ t: 'Ingreso irregular', lvl: 'Media', pw: 55, acts: [{ d: 'Día 2', ch: 'WhatsApp', tone: 'Empático', of: 'Plan de pagos en dos cuotas' }, { d: 'Día 6', ch: 'Llamada', tone: 'Empático', of: 'Confirmar el plan de pagos' }] },
+{ t: 'Evita el contacto', lvl: 'Baja', pw: 28, acts: [{ d: 'Día 1', ch: 'SMS', tone: 'Neutral', of: 'Aviso de saldo pendiente' }, { d: 'Día 4', ch: 'Email', tone: 'Formal', of: 'Estado de cuenta' }, { d: 'Día 8', ch: 'Llamada', tone: 'Firme y respetuoso', of: 'Propuesta de reestructuración' }] }
+];
+const p = PR[k];
+return {
+c_btns: PR.map((x, i) => ({ t: x.t, on: i === k, h: () => this.setState({ c_k: i }) })),
+c_lvl: p.lvl, c_pw: p.pw + '%',
+c_acts: p.acts
+};
+}
+d4() {
+const s = this.state || {};
+const pc = s.a_s ?? 25;
+const x = pc / 100;
+const gain = (t) => 0.9 * (1 - Math.exp(-4 * t)) + (1 - t) * 0.0147;
+const idx = Math.round(gain(x) / gain(0.25) * 100);
+return {
+a_s: pc, a_sT: pc + '%',
+a_sh0: pc + '%', a_sh1: Math.round((100 - pc) * 0.54) + '%', a_sh2: Math.round((100 - pc) * 0.46) + '%',
+a_idx: idx, a_mw: (100 / 160 * 100) + '%', a_yw: (Math.min(idx, 160) / 160 * 100) + '%',
+a_sH: (e) => this.setState({ a_s: +e.target.value })
+};
+}
+scrollChat() {
+setTimeout(() => { const c = document.querySelector('.chat'); if (c) c.scrollTo({ top: c.scrollHeight, behavior: 'smooth' }); }, 60);
+}
+d5() {
+const s = this.state || {};
+const first = [{ cls: 'a', txt: 'Hola, soy el asistente de Sora. ¿En qué te ayudo?', acts: [] }];
+const msgs = s.g_msgs || first;
+const QS = [
+{ q: '¿Cuándo es mi próxima cuota?', a: 'Tu próxima cuota vence el 28 de noviembre y es de $1,250 MXN.', acts: ['Consultó tu cuenta'] },
+{ q: 'Quiero adelantar un pago', a: 'Listo. Puedes pagar hoy desde $200. Te envié el link de pago.', acts: ['Consultó tu saldo', 'Generó un link de pago'] },
+{ q: 'No reconozco un cargo', a: 'Entiendo. Marqué el cargo en revisión y abrí tu caso. Una persona de nuestro equipo te contactará.', acts: ['Marcó el cargo en revisión', 'Escaló a un analista humano'] }
+];
+const ask = (i) => {
+const st = this.state || {};
+if (st.g_typing) return;
+const cur = st.g_msgs || first;
+const next = cur.concat([{ cls: 'u', txt: QS[i].q, acts: [] }]);
+this.setState({ g_msgs: next, g_typing: true });
+this.scrollChat();
+setTimeout(() => {
+const base = (this.state && this.state.g_msgs) || next;
+this.setState({ g_msgs: base.concat([{ cls: 'a', txt: QS[i].a, acts: QS[i].acts.map((t) => ({ t: t })) }]), g_typing: false });
+this.scrollChat();
+}, 1100);
+};
+return {
+g_msgs: msgs, g_typing: !!s.g_typing,
+g_btns: QS.map((x, i) => ({ t: x.q, h: () => ask(i) })),
+g_reset: () => this.setState({ g_msgs: null, g_typing: false })
+};
+}
+d6() {
+const s = this.state || {};
+const k = s.f_k ?? 1;
+const L = [
+{ t: 'Nivel 0 · Manual', d: 'Los modelos se entrenan y se despliegan a mano.' },
+{ t: 'Nivel 1 · Pipelines automáticos', d: 'El entrenamiento y el serving corren en pipelines automáticos.' },
+{ t: 'Nivel 2 · CI/CD de modelos', d: 'Cada cambio de un modelo se prueba y se despliega solo.' },
+{ t: 'Nivel IA · Agentes y LLMs', d: 'Agentes y LLMs operan en producción sobre la misma plataforma.' }
+];
+const C = [['Notebooks reproducibles', 0], ['Registro de modelos', 0], ['Entrenamiento automatizado', 1], ['Feature store', 1], ['Serving de modelos', 1], ['CI/CD de modelos', 2], ['Monitoreo de drift', 2], ['Agentes y LLMs en producción', 3]];
+return {
+f_btns: L.map((x, i) => ({ t: x.t, on: i === k, h: () => this.setState({ f_k: i }) })),
+f_desc: L[k].d,
+f_comps: C.map((c) => ({ t: c[0], cls: c[1] <= k ? 'in' : '' }))
+};
+}
+renderVals() {
+const sent = !!(this.state && this.state.sent);
+return Object.assign({
+accent: this.props.accent ?? '#4FE3C1',
+sent: sent,
+notSent: !sent,
+submit: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ sent: true }); }
+}, this.pvVals());
+}
+}
+</script>
+</body>
+</html>
